@@ -88,7 +88,7 @@
         "data_source"
       ],
       "type": "object",
-      "title": "Connect to Earth Engine"
+      "title": "Connect to Google Earth Engine"
     },
     "Subject Group": {
       "type": "object",
@@ -287,9 +287,9 @@
         }
       }
     },
-    "Generate Word Doc Report": {
+    "Word Document Cover Page Logo": {
       "type": "object",
-      "description": "Configure word report settings",
+      "description": "Download or fetch the logo to be used in the report cover page.",
       "ecoscope:task_group": true,
       "properties": {
         "logo_path": {
@@ -306,7 +306,7 @@
               ],
               "default": null,
               "title": "Input Method",
-              "description": "Provide the organization logo to display on the report cover page (PNG or JPG recommended). Required when 'Generate Word Doc Report' is enabled; leave blank otherwise."
+              "description": "How to obtain the file: download from a URL or use a local file path"
             }
           },
           "type": "object",
@@ -845,7 +845,7 @@
       "Trajectory Segment Filter",
       "Map Zoom & Extent",
       "Mean Speed Raster",
-      "Generate Word Doc Report"
+      "Word Document Cover Page Logo"
     ]
   },
   "additionalProperties": false

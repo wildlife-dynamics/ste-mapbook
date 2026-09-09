@@ -41,9 +41,6 @@ rjsf-overrides:
     Trajectory Segment Filter.properties.custom_trajs_filter.properties.max_speed_kmhr.title: "Maximum Speed (km/h)"
     Trajectory Segment Filter.properties.custom_trajs_filter.properties.max_speed_kmhr.description: "Discard segments where average speed exceeds this value. For elephants, 9 km/h is a sensible ceiling."
 
-    # Report Logo (now part of the Generate Word Doc Report task-group)
-    Generate Word Doc Report.properties.logo_path.properties.input_method.description: "Provide the organization logo to display on the report cover page (PNG or JPG recommended). Required when 'Generate Word Doc Report' is enabled; leave blank otherwise."
-
     # Previous Period — clarify that the comparison period ends where the current time range begins
     Previous Period.properties.set_previous_period.properties.offset.description: "Choose how to calculate the comparison period's Start Date. In every mode, the comparison period ends on your selected time range's Start Date (so it never overlaps with the current period) — only the Start Date changes."
 
@@ -123,7 +120,7 @@ workflow:
     id: er_client_name
     task: set_er_connection 
 
-  - name: Connect to Earth Engine 
+  - name: Connect to Google Earth Engine 
     id: gee_project_name
     task: set_gee_connection 
 
@@ -2025,9 +2022,9 @@ workflow:
       df: ${{ workflow.rename_traj_cols.return }}
       column_name: subject_name
 
-  - title: Generate Word Doc Report
+  - title: Word Document Cover Page Logo
     type: task-group
-    description: Configure word report settings
+    description: Download or fetch the logo to be used in the report cover page.
     tasks:
       - name: null
         id: include_maps_toggle
