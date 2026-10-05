@@ -1,21 +1,10 @@
-name:  # Title Case, e.g. "My Ecoscope Workflow Template"
-
-# at least one author is required
+name: STE Mapbook
 author:
-  - name: ""
-    organization: ""
-    email: ""
+  - name: Tevin Temu
+    organization: Wildlife Dynamics
+    email: tevin@wildlifedynamics.com
 
-description: # A short description
-
-# todo: add example
-theory: "" # optional
-
-# todo: add example
-output_comment: "" # optional
-
-# optional
-# example
-# citation: 
-#   - Wu, Y. et al. (2025). "Monitoring elephant spatial patterns with Ecoscope workflows."
-citation: [] 
+description: Generates a multi-section mapbook for wildlife tracking data from EarthRanger, producing six maps per subject (movement tracks against a previous period, speed, day/night movement, home range, mean speed raster, and seasonal home range) in a Word mapbook and on an interactive dashboard.
+theory: "GPS relocations for the current and a previous period are converted to trajectory segments, with segments of unrealistic length, duration, or speed (above 9 km/h by default) dropped. Segments are classified by speed and as day or night movement. Home ranges are estimated with Elliptical Time Density (ETD) as 50th to 99.9th percentile contours and with a Minimum Convex Polygon (MCP). Mean speed is mapped on a hexagonal raster with a fixed or automatic cell size. Wet and dry seasons are derived from NDVI in Google Earth Engine, and ETD home ranges are calculated separately for each season."
+output_comment: "Outputs a dashboard with movement tracks, speed, day/night, home range, mean speed raster, and seasonal home range maps per subject over protected area (LandDX) or EarthRanger spatial feature overlays, plus total MCP area, total grid area, and sex widgets. Also writes current- and previous-period relocations and trajectories and home range polygons (GeoParquet), each map as HTML, and a Word mapbook with a cover page and one section per subject."
+citation: []
