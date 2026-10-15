@@ -85,7 +85,7 @@ Default is **Preset → Same as current period**.
 
 | Field | Description | Default |
 |-------|-------------|---------|
-| Subject Group Name | Name of the subject group in EarthRanger (**case-sensitive**) | `Elephants` |
+| Subject Group Name | The subject group in EarthRanger, picked from a drop-down of the subject groups on the chosen data source | `Elephants` |
 | Include Subject Additional *(advanced)* | Whether to include the subject's free-form `additional` JSON metadata from EarthRanger. Applied to both the current and previous period observation fetches | `false` |
 
 ### Map Overlay
