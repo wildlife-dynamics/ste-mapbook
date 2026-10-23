@@ -34,17 +34,21 @@ from ecoscope.platform.tasks.preprocessing import (
 from ecoscope.platform.tasks.preprocessing import (
     relocations_to_trajectory as relocations_to_trajectory,
 )
+from ecoscope.platform.tasks.results import create_geojson_layer as create_geojson_layer
 from ecoscope.platform.tasks.results import (
     create_map_widget_single_view as create_map_widget_single_view,
 )
+from ecoscope.platform.tasks.results import create_path_layer as create_path_layer
 from ecoscope.platform.tasks.results import (
     create_single_value_widget_single_view as create_single_value_widget_single_view,
 )
 from ecoscope.platform.tasks.results import (
     create_text_widget_single_view as create_text_widget_single_view,
 )
+from ecoscope.platform.tasks.results import draw_map as draw_map
 from ecoscope.platform.tasks.results import gather_dashboard as gather_dashboard
 from ecoscope.platform.tasks.results import merge_widget_views as merge_widget_views
+from ecoscope.platform.tasks.results import set_base_maps as set_base_maps
 from ecoscope.platform.tasks.skip import (
     any_dependency_skipped as any_dependency_skipped,
 )
@@ -72,16 +76,6 @@ from ecoscope.platform.tasks.transformation import (
 )
 from ecoscope.platform.tasks.transformation import sort_values as sort_values
 from ecoscope_workflows_ext_custom.tasks.io import html_to_png as html_to_png
-from ecoscope_workflows_ext_custom.tasks.results import (
-    create_geojson_layer as create_geojson_layer_1,
-)
-from ecoscope_workflows_ext_custom.tasks.results import (
-    create_path_layer as create_path_layer_1,
-)
-from ecoscope_workflows_ext_custom.tasks.results import draw_map as draw_map_1
-from ecoscope_workflows_ext_custom.tasks.results import (
-    set_base_maps_pydeck as set_base_maps_pydeck,
-)
 from ecoscope_workflows_ext_custom.tasks.spatial_ops import (
     reproject_gdf as reproject_gdf,
 )
@@ -290,7 +284,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     configure_base_maps = (
-        task(set_base_maps_pydeck)
+        task(set_base_maps)
         .validate()
         .set_task_instance_id("configure_base_maps")
         .handle_errors()
@@ -697,6 +691,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            duplicate_strategy="suffix",
             raise_if_not_found=False,
             df=add_temporal_prev_index_to_traj,
             drop_columns=[],
@@ -756,6 +751,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            duplicate_strategy="suffix",
             raise_if_not_found=True,
             df=classify_trajectories_speed_bins,
             drop_columns=[],
@@ -1305,7 +1301,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     generate_track_layers = (
-        task(create_path_layer_1)
+        task(create_path_layer)
         .validate()
         .set_task_instance_id("generate_track_layers")
         .handle_errors()
@@ -1319,6 +1315,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         )
         .partial(
             data_url=None,
+            tooltip_columns=["duration_status", "duration_status_colors", "is_night"],
             layer_style={
                 "get_color": "duration_status_colors",
                 "get_width": 2.25,
@@ -1421,7 +1418,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     draw_movement_tracks = (
-        task(draw_map_1)
+        task(draw_map)
         .validate()
         .set_task_instance_id("draw_movement_tracks")
         .handle_errors()
@@ -1436,6 +1433,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .partial(
             tile_layers=configure_base_maps,
             static=False,
+            output_type="html",
             title=None,
             max_zoom=10,
             legend_style={"placement": "bottom-right"},
@@ -1600,7 +1598,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     generate_speedmap_layers = (
-        task(create_path_layer_1)
+        task(create_path_layer)
         .validate()
         .set_task_instance_id("generate_speedmap_layers")
         .handle_errors()
@@ -1614,6 +1612,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         )
         .partial(
             data_url=None,
+            tooltip_columns=["speed_bins", "speed_bins_colormap", "speed_kmhr"],
             layer_style={
                 "get_color": "speed_bins_colormap",
                 "get_width": 2.25,
@@ -1679,7 +1678,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     draw_speedmap = (
-        task(draw_map_1)
+        task(draw_map)
         .validate()
         .set_task_instance_id("draw_speedmap")
         .handle_errors()
@@ -1692,6 +1691,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            output_type="html",
             tile_layers=configure_base_maps,
             static=False,
             title=None,
@@ -1848,7 +1848,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     generate_day_night_layers = (
-        task(create_path_layer_1)
+        task(create_path_layer)
         .validate()
         .set_task_instance_id("generate_day_night_layers")
         .handle_errors()
@@ -1861,6 +1861,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            tooltip_columns=["is_night", "day_night_colors"],
             data_url=None,
             layer_style={
                 "get_color": "day_night_colors",
@@ -1928,7 +1929,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     draw_day_night_map = (
-        task(draw_map_1)
+        task(draw_map)
         .validate()
         .set_task_instance_id("draw_day_night_map")
         .handle_errors()
@@ -1941,6 +1942,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            output_type="html",
             tile_layers=configure_base_maps,
             static=False,
             title=None,
@@ -2297,7 +2299,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     generate_home_range_layers = (
-        task(create_geojson_layer_1)
+        task(create_geojson_layer)
         .validate()
         .set_task_instance_id("generate_home_range_layers")
         .handle_errors()
@@ -2310,6 +2312,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            tooltip_columns=["percentile", "etd_percentile_colors", "area_sqkm"],
             data_url=None,
             layer_style={
                 "filled": True,
@@ -2362,7 +2365,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     create_mcp_polygon_layer = (
-        task(create_geojson_layer_1)
+        task(create_geojson_layer)
         .validate()
         .set_task_instance_id("create_mcp_polygon_layer")
         .handle_errors()
@@ -2375,6 +2378,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            tooltip_columns=["area_km2"],
             data_url=None,
             layer_style={
                 "filled": False,
@@ -2462,7 +2466,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     draw_home_range_map = (
-        task(draw_map_1)
+        task(draw_map)
         .validate()
         .set_task_instance_id("draw_home_range_map")
         .handle_errors()
@@ -2475,6 +2479,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            output_type="html",
             tile_layers=configure_base_maps,
             static=False,
             title=None,
@@ -2765,7 +2770,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     create_mean_speed_raster_layer = (
-        task(create_geojson_layer_1)
+        task(create_geojson_layer)
         .validate()
         .set_task_instance_id("create_mean_speed_raster_layer")
         .handle_errors()
@@ -2778,6 +2783,11 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            tooltip_columns=[
+                "value_bins",
+                "bins_formatted",
+                "speedraster_bins_colormap",
+            ],
             data_url=None,
             layer_style={
                 "filled": True,
@@ -2849,7 +2859,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     draw_mean_speed_raster_map = (
-        task(draw_map_1)
+        task(draw_map)
         .validate()
         .set_task_instance_id("draw_mean_speed_raster_map")
         .handle_errors()
@@ -2862,6 +2872,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            output_type="html",
             tile_layers=configure_base_maps,
             static=False,
             title=None,
@@ -3145,7 +3156,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     generate_season_layers = (
-        task(create_geojson_layer_1)
+        task(create_geojson_layer)
         .validate()
         .set_task_instance_id("generate_season_layers")
         .handle_errors()
@@ -3158,6 +3169,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            tooltip_columns=["season", "season_colors"],
             data_url=None,
             layer_style={
                 "filled": True,
@@ -3228,7 +3240,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     draw_seasonal_home_range_map = (
-        task(draw_map_1)
+        task(draw_map)
         .validate()
         .set_task_instance_id("draw_seasonal_home_range_map")
         .handle_errors()
@@ -3241,6 +3253,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
+            output_type="html",
             tile_layers=configure_base_maps,
             static=False,
             title=None,

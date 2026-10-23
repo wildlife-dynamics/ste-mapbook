@@ -1,15 +1,15 @@
 id: mapbook_report 
 requirements:
   - name: ecoscope-platform
-    version: "2.18.0"
+    version: ==2.25.3
     channel: https://repo.prefix.dev/ecoscope-workflows/
 
   - name: ecoscope-workflows-ext-custom
-    version: "0.1.0rc14.*"
+    version: "0.1.4.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: ecoscope-workflows-ext-ste
-    version: "0.0.0rc1.*"
+    version: "0.0.24.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: pydeck
@@ -58,6 +58,7 @@ rjsf-overrides:
     Mean Speed Raster.properties.generate_mean_speed_raster.properties.step_length.anyOf:
       - type: integer
         title: "Fixed value (m)"
+
       - type: "null"
         title: "Auto (use average step distance)"
 
@@ -97,8 +98,9 @@ rjsf-overrides:
         default: 0
         description: "Whole days to go back from your time range's start date."
 
-    # Previous Period — Preset
-    PresetPreviousPeriod.properties.preset.description: "Choose a common lookback period, counted backward from your time range's start date. \"Same as current period\" reuses your currently selected Start and End dates unchanged."
+    # Previous Period — Preset: default to a comparison period as long as the current one
+    PresetPreviousPeriod.properties.preset.default: "Same as current period"
+    PresetPreviousPeriod.properties.preset.description: "Choose a common lookback period, counted backward from your time range's start date. \"Same as current period\" (the default) uses a comparison period of the same length as your time range, ending on its start date."
 
     # Previous Period — Calendar
     CalendarPreviousPeriod.properties.since.description: "Pick the exact Start Date for the comparison period."
@@ -141,7 +143,7 @@ workflow:
   
   - name: Configure basemap layers 
     id: configure_base_maps 
-    task: set_base_maps_pydeck
+    task: set_base_maps
     partial:
       base_maps:
         - url: >-
@@ -161,10 +163,11 @@ workflow:
     type: task-group
     description: >-
       Define the comparison ("previous") period to contrast against your selected time range.
-      Every option below computes a period that ends on the same End Date as your time range, then
-      works backward to determine its Start Date. Choose Custom to enter your own Years / Months /
-      Weeks / Days offset (defaults to 1 month back), Preset for a common lookback (e.g. 1, 3 or 6
-      months, or 1 year back), or Calendar to pick an exact Start Date.
+      Every option below computes a period that ends on your time range's Start Date, then
+      works backward to determine its Start Date. By default this is Preset → Same as current period
+      (a period of the same length as your time range). Choose another Preset for a common lookback
+      (1, 3 or 6 months, or 1 year back), Custom to enter your own Years / Months / Weeks / Days
+      offset, or Calendar to pick an exact Start Date.
     tasks: 
       - name: null
         id: set_previous_period
@@ -338,6 +341,7 @@ workflow:
     id: rename_prev_traj_cols
     task: map_columns
     partial:
+      duplicate_strategy: "suffix"
       raise_if_not_found: false
       df: ${{ workflow.add_temporal_prev_index_to_traj.return }}
       drop_columns: []
@@ -369,6 +373,7 @@ workflow:
     id: rename_traj_cols 
     task: map_columns 
     partial:
+      duplicate_strategy: "suffix"
       raise_if_not_found: true
       df: ${{ workflow.classify_trajectories_speed_bins.return }}
       drop_columns: []
@@ -640,9 +645,13 @@ workflow:
 
   - name: Create movement track layers
     id: generate_track_layers
-    task: ecoscope_workflows_ext_custom.tasks.results.create_path_layer
+    task: create_path_layer
     partial: 
       data_url: null
+      tooltip_columns:
+        - duration_status
+        - duration_status_colors
+        - is_night
       layer_style:
         get_color: duration_status_colors
         get_width: 2.25
@@ -713,10 +722,11 @@ workflow:
 
   - name: Draw movement tracks map
     id: draw_movement_tracks
-    task: ecoscope_workflows_ext_custom.tasks.results.draw_map 
+    task: draw_map 
     partial: 
       tile_layers: ${{ workflow.configure_base_maps.return }}
       static: false
+      output_type: html
       title: null 
       max_zoom: 10
       legend_style: 
@@ -820,9 +830,13 @@ workflow:
 
   - name: Generate speedmap layers 
     id: generate_speedmap_layers 
-    task: ecoscope_workflows_ext_custom.tasks.results.create_path_layer 
+    task: create_path_layer 
     partial: 
       data_url: null
+      tooltip_columns:
+        - speed_bins
+        - speed_bins_colormap
+        - speed_kmhr
       layer_style:
         get_color: speed_bins_colormap
         get_width: 2.25
@@ -869,8 +883,9 @@ workflow:
 
   - name: Draw speedmap 
     id: draw_speedmap
-    task: ecoscope_workflows_ext_custom.tasks.results.draw_map 
+    task: draw_map 
     partial: 
+      output_type: html
       tile_layers: ${{ workflow.configure_base_maps.return }}
       static: false
       title: null 
@@ -970,8 +985,11 @@ workflow:
 
   - name: Create day/night map layers 
     id: generate_day_night_layers 
-    task: ecoscope_workflows_ext_custom.tasks.results.create_path_layer
+    task: create_path_layer
     partial: 
+      tooltip_columns:
+        - is_night
+        - day_night_colors
       data_url: null 
       layer_style:
         get_color: day_night_colors
@@ -1021,8 +1039,9 @@ workflow:
 
   - name: Draw day/night map
     id: draw_day_night_map 
-    task: ecoscope_workflows_ext_custom.tasks.results.draw_map 
+    task: draw_map 
     partial: 
+      output_type: html
       tile_layers: ${{ workflow.configure_base_maps.return }}
       static: false
       title: null 
@@ -1245,8 +1264,12 @@ workflow:
 
   - name: Create home range layers 
     id: generate_home_range_layers 
-    task: ecoscope_workflows_ext_custom.tasks.results.create_geojson_layer
+    task: create_geojson_layer
     partial: 
+      tooltip_columns:
+        - percentile
+        - etd_percentile_colors
+        - area_sqkm
       data_url: null
       layer_style: 
         filled: true 
@@ -1289,8 +1312,10 @@ workflow:
 
   - name: Create mcp polygon layer 
     id: create_mcp_polygon_layer 
-    task: ecoscope_workflows_ext_custom.tasks.results.create_geojson_layer 
+    task: create_geojson_layer 
     partial: 
+      tooltip_columns:
+        - area_km2
       data_url: null
       layer_style: 
         filled: false  
@@ -1354,8 +1379,9 @@ workflow:
 
   - name: Draw home range map
     id: draw_home_range_map
-    task: ecoscope_workflows_ext_custom.tasks.results.draw_map 
+    task: draw_map 
     partial: 
+      output_type: html
       tile_layers: ${{ workflow.configure_base_maps.return }}
       static: false
       title: null 
@@ -1541,8 +1567,12 @@ workflow:
 
   - name: Create mean speed raster layer
     id: create_mean_speed_raster_layer 
-    task: ecoscope_workflows_ext_custom.tasks.results.create_geojson_layer 
+    task: create_geojson_layer 
     partial: 
+      tooltip_columns:
+        - value_bins
+        - bins_formatted
+        - speedraster_bins_colormap
       data_url: null
       layer_style: 
         filled: true 
@@ -1594,8 +1624,9 @@ workflow:
 
   - name: Draw mean speed raster map
     id: draw_mean_speed_raster_map
-    task: ecoscope_workflows_ext_custom.tasks.results.draw_map 
+    task: draw_map 
     partial: 
+      output_type: html
       tile_layers: ${{ workflow.configure_base_maps.return }}
       static: false
       title: null 
@@ -1779,8 +1810,11 @@ workflow:
 
   - name: Create seasonal home range layers
     id: generate_season_layers 
-    task: ecoscope_workflows_ext_custom.tasks.results.create_geojson_layer
+    task: create_geojson_layer
     partial: 
+      tooltip_columns:
+        - season
+        - season_colors
       data_url: null
       layer_style: 
         filled: true 
@@ -1832,8 +1866,9 @@ workflow:
 
   - name: Draw seasonal home range map
     id: draw_seasonal_home_range_map
-    task: ecoscope_workflows_ext_custom.tasks.results.draw_map 
+    task: draw_map 
     partial:
+      output_type: html
       tile_layers: ${{ workflow.configure_base_maps.return }}
       static: false
       title: null 

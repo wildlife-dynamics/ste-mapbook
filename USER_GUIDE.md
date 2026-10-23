@@ -75,18 +75,17 @@ Defines the comparison period shown on the Movement Tracks map. In every mode, t
 
 | Mode | Description |
 |------|-------------|
-| **Preset** | Pick a common lookback: Same as current period, Previous month, Previous 3 months, Previous 6 months, or Previous year |
+| **Preset** | Pick a common lookback: Same as current period, 1 month back, 3 months back, 6 months back, or 1 year back |
 | **Calendar** | Manually pick the exact start date for the comparison period |
 | **Custom** | Enter a Years / Months / Weeks / Days offset to count backward from your time range's start date (default: 1 month back) |
 
-Default is **Preset → Same as current period**.
+Default is **Preset → Same as current period**: a comparison period of the same length as your time range, ending on its start date. For example, a 1 Jul – 30 Sep time range is compared with 1 Apr – 1 Jul.
 
 ### Subject Group
 
 | Field | Description | Default |
 |-------|-------------|---------|
 | Subject Group Name | The subject group in EarthRanger, picked from a drop-down of the subject groups on the chosen data source | `Elephants` |
-| Include Subject Additional *(advanced)* | Whether to include the subject's free-form `additional` JSON metadata from EarthRanger. Applied to both the current and previous period observation fetches | `false` |
 
 ### Map Overlay
 
@@ -167,6 +166,22 @@ All outputs are written to `$ECOSCOPE_WORKFLOWS_RESULTS/`:
 | `mapbook_context_page.docx` | Cover page document |
 | `*.docx` (per subject) | Individual subject report sections |
 | Merged mapbook `.docx` | Final combined Word report |
+
+### Map Tooltips
+
+Hover over a track, contour or cell on any interactive map (in the dashboard or the saved `.html` files) to see its values:
+
+| Map | Tooltip shows |
+|-----|---------------|
+| Movement Tracks | Period (`Current tracks` / `Previous tracks`), its track colour, and whether the segment is at night (`is_night`) |
+| Speed Map | Speed bin, the bin's colour, and the segment's speed in km/h |
+| Day/Night Map | `is_night` (`True` = night) and the track colour |
+| Home Range (ETD) | Percentile contour, its colour, and the contour area (km²) |
+| Home Range (MCP outline) | MCP area (km²) |
+| Mean Speed Raster | Speed class, its label, and its colour |
+| Seasonal Home Range | Season (wet / dry) and its colour |
+
+Tooltips are only available on the interactive maps; the map images in the Word mapbook are static.
 
 ---
 

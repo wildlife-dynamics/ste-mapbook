@@ -91,19 +91,18 @@
     <table>
       <thead><tr><th>Mode</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td><strong>Preset</strong></td><td>Pick a common lookback: Same as current period, Previous month, Previous 3 months, Previous 6 months, or Previous year</td></tr>
+        <tr><td><strong>Preset</strong></td><td>Pick a common lookback: Same as current period, 1 month back, 3 months back, 6 months back, or 1 year back</td></tr>
         <tr><td><strong>Calendar</strong></td><td>Manually pick the exact start date for the comparison period</td></tr>
         <tr><td><strong>Custom</strong></td><td>Enter a Years / Months / Weeks / Days offset to count backward from your time range's start date (default: 1 month back)</td></tr>
       </tbody>
     </table>
-    <p>Default is <strong>Preset &rarr; Same as current period</strong>.</p>
+    <p>Default is <strong>Preset &rarr; Same as current period</strong>: a comparison period of the same length as your time range, ending on its start date. For example, a 1 Jul &ndash; 30 Sep time range is compared with 1 Apr &ndash; 1 Jul.</p>
 
     <h3 id="subject-group">Subject Group</h3>
     <table>
       <thead><tr><th>Field</th><th>Description</th><th>Default</th></tr></thead>
       <tbody>
         <tr><td>Subject Group Name</td><td>The subject group in EarthRanger, picked from a drop-down of the subject groups on the chosen data source</td><td><code>Elephants</code></td></tr>
-        <tr><td>Include Subject Additional <em>(advanced)</em></td><td>Whether to include the subject's free-form <code>additional</code> JSON metadata from EarthRanger. Applied to both the current and previous period observation fetches</td><td><code>false</code></td></tr>
       </tbody>
     </table>
 
@@ -190,6 +189,22 @@
         <tr><td>Merged mapbook <code>.docx</code></td><td>Final combined Word report</td></tr>
       </tbody>
     </table>
+
+    <h3 id="map-tooltips">Map Tooltips</h3>
+    <p>Hover over a track, contour or cell on any interactive map (in the dashboard or the saved <code>.html</code> files) to see its values:</p>
+    <table>
+      <thead><tr><th>Map</th><th>Tooltip shows</th></tr></thead>
+      <tbody>
+        <tr><td>Movement Tracks</td><td>Period (<code>Current tracks</code> / <code>Previous tracks</code>), its track colour, and whether the segment is at night (<code>is_night</code>)</td></tr>
+        <tr><td>Speed Map</td><td>Speed bin, the bin's colour, and the segment's speed in km/h</td></tr>
+        <tr><td>Day/Night Map</td><td><code>is_night</code> (<code>True</code> = night) and the track colour</td></tr>
+        <tr><td>Home Range (ETD)</td><td>Percentile contour, its colour, and the contour area (km²)</td></tr>
+        <tr><td>Home Range (MCP outline)</td><td>MCP area (km²)</td></tr>
+        <tr><td>Mean Speed Raster</td><td>Speed class, its label, and its colour</td></tr>
+        <tr><td>Seasonal Home Range</td><td>Season (wet / dry) and its colour</td></tr>
+      </tbody>
+    </table>
+    <p>Tooltips are only available on the interactive maps; the map images in the Word mapbook are static.</p>
 
     <p>Something not working as expected? See <a href="troubleshooting.html">Troubleshooting</a>. For a deeper look at the pipeline internals, see the <a href="technical-guide.html">Technical Guide</a>.</p>
   </main>

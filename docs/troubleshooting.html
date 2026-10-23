@@ -75,7 +75,12 @@
 
     <div class="error-block">
       <p class="symptom">Previous-period comparison is missing or looks wrong on the Movement Tracks map</p>
-      <p>Check the <a href="user-guide.html#previous-period">Previous Period</a> mode &mdash; <strong>Preset</strong>'s "Same as current period" mirrors the current window's length, while the other presets (previous month/3 months/6 months/year) use fixed calendar boundaries rather than a rolling window. If you need a specific comparison window, use <strong>Calendar</strong> to pick an exact start date, or <strong>Custom</strong> to enter your own Years/Months/Weeks/Days offset.</p>
+      <p>Check the <a href="user-guide.html#previous-period">Previous Period</a> mode. Every mode ends the comparison period on your time range's start date. The default, <strong>Preset</strong> &rarr; "Same as current period", makes it the same length as your time range; the other presets (1 month / 3 months / 6 months / 1 year back) make it that fixed length regardless of how long your time range is. If you need a specific comparison window, use <strong>Calendar</strong> to pick an exact start date, or <strong>Custom</strong> to enter your own Years/Months/Weeks/Days offset.</p>
+    </div>
+
+    <div class="error-block">
+      <p class="symptom">Hovering over a map shows no tooltip, or a colour value instead of a label</p>
+      <p>Tooltips only work on the interactive maps (dashboard and saved <code>.html</code> files), not the images in the Word mapbook. Each map's tooltip also lists the colour column used to draw it (e.g. <code>day_night_colors</code>), so a raw colour value next to the label is expected. See <a href="user-guide.html#map-tooltips">Map Tooltips</a> for what each map shows.</p>
     </div>
 
     <div class="error-block">

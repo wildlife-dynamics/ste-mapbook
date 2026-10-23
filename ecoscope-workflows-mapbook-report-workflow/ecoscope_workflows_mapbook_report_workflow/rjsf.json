@@ -124,7 +124,7 @@
     },
     "Previous Period": {
       "type": "object",
-      "description": "Define the comparison (\"previous\") period to contrast against your selected time range. Every option below computes a period that ends on the same End Date as your time range, then works backward to determine its Start Date. Choose Custom to enter your own Years / Months / Weeks / Days offset (defaults to 1 month back), Preset for a common lookback (e.g. 1, 3 or 6 months, or 1 year back), or Calendar to pick an exact Start Date.",
+      "description": "Define the comparison (\"previous\") period to contrast against your selected time range. Every option below computes a period that ends on your time range's Start Date, then works backward to determine its Start Date. By default this is Preset \u2192 Same as current period (a period of the same length as your time range). Choose another Preset for a common lookback (1, 3 or 6 months, or 1 year back), Custom to enter your own Years / Months / Weeks / Days offset, or Calendar to pick an exact Start Date.",
       "ecoscope:task_group": true,
       "properties": {
         "set_previous_period": {
@@ -429,8 +429,8 @@
     "PresetPreviousPeriod": {
       "properties": {
         "preset": {
-          "default": "1 month back",
-          "description": "Choose a common lookback period, counted backward from your time range's start date. \"Same as current period\" reuses your currently selected Start and End dates unchanged.",
+          "default": "Same as current period",
+          "description": "Choose a common lookback period, counted backward from your time range's start date. \"Same as current period\" (the default) uses a comparison period of the same length as your time range, ending on its start date.",
           "enum": [
             "Same as current period",
             "1 month back",
