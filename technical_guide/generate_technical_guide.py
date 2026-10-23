@@ -137,7 +137,7 @@ def build():
         sp(8),
         hr(),
         p("Elephant Movescape Analysis — Methodology &amp; Calculation Reference", META),
-        p(f"Version 1.2  ·  Generated {date.today().strftime('%B %d, %Y')}", META),
+        p(f"Version 1.3  ·  Generated {date.today().strftime('%B %d, %Y')}", META),
         hr(),
         PageBreak(),
     ]
@@ -187,22 +187,22 @@ def build():
 
         sp(4), h2("2.2 Subject Group"),
         p(
-            "The user specifies a <b>Subject Group Name</b> (default: <code>Elephants</code>) "
-            "that must match exactly — case-sensitively — the name of a subject group in "
-            "the connected EarthRanger instance. The workflow fetches every observation for "
-            "all subjects within that group over the configured time range."
+            "The user picks a <b>Subject Group Name</b> (default: <code>Elephants</code>) "
+            "from a drop-down of the subject groups on the chosen EarthRanger data source. "
+            "The list is filled by the <code>EarthRangerEnumResolver</code> form transformer "
+            "once a data source is selected, so the name always matches a group that exists. "
+            "The workflow fetches every observation for all subjects within that group over "
+            "the configured time range."
         ),
         note(
-            "If the subject group name is wrong or the group contains no observations in "
-            "the requested period, the workflow skips all downstream tasks gracefully via "
-            "the <code>any_is_empty_df</code> skipif condition."
+            "If the group contains no observations in the requested period, the workflow "
+            "skips all downstream tasks gracefully via the <code>any_is_empty_df</code> "
+            "skipif condition."
         ),
         p(
-            "An advanced <b>Include Subject Additional</b> toggle (default: disabled) is "
-            "exposed on both the current-period and previous-period observation fetch "
-            "tasks. When enabled, each subject's free-form <code>additional</code> JSON "
-            "field from EarthRanger is retained in the fetched observations rather than "
-            "discarded."
+            "Both observation fetches set <code>include_subject_additional: false</code>, "
+            "so each subject's free-form <code>additional</code> JSON field is not "
+            "retained. This is fixed in the spec and no longer exposed on the form."
         ),
 
         sp(4), h2("2.3 Google Earth Engine Project"),
@@ -263,7 +263,7 @@ def build():
         sp(4), h2("2.5 Base Map Tile Layer"),
         p(
             "The background raster is set by the <b>Configure basemap layers</b> "
-            "step (<code>set_base_maps_pydeck</code>). It ships pre-filled with the "
+            "step (the platform's <code>set_base_maps</code> task). It ships pre-filled with the "
             "<b>ArcGIS World Hillshade</b> tile service, but the URL, opacity, and max "
             "zoom are user-configurable rather than hard-coded:"
         ),
@@ -639,6 +639,43 @@ def build():
         ),
     ]
 
+    # 4.7 Map Rendering & Tooltips
+    story += [
+        sp(4), h2("4.7 Map Rendering &amp; Tooltips"),
+        p(
+            "All six maps are drawn with the built-in <b>ecoscope-platform</b> map tasks "
+            "rather than the earlier copies in <code>ecoscope-workflows-ext-custom</code>: "
+            "<code>create_path_layer</code> for the track maps (Movement Tracks, Speed, "
+            "Day / Night), <code>create_geojson_layer</code> for the polygon maps (ETD, MCP, "
+            "Mean Speed Raster, Seasonal Home Range), and <code>draw_map</code> with "
+            "<code>output_type: html</code> to render each map as an interactive DeckGL page. "
+            "Layer and legend styling is unchanged."
+        ),
+        p(
+            "Every layer sets <code>tooltip_columns</code>, so hovering over a feature on the "
+            "interactive map shows these columns:"
+        ),
+        table(
+            [
+                ["Layer",                 "Tooltip columns"],
+                ["Movement tracks",       "duration_status, duration_status_colors, is_night"],
+                ["Speedmap",              "speed_bins, speed_bins_colormap, speed_kmhr"],
+                ["Day / Night",           "is_night, day_night_colors"],
+                ["Home range (ETD)",      "percentile, etd_percentile_colors, area_sqkm"],
+                ["MCP polygon",           "area_km2"],
+                ["Mean speed raster",     "value_bins, bins_formatted, speedraster_bins_colormap"],
+                ["Seasonal home range",   "season, season_colors"],
+            ],
+            [4.5*cm, 12*cm],
+        ),
+        note(
+            "The <code>*_colors</code> / <code>*_colormap</code> columns hold the colour "
+            "each feature is drawn with, so the tooltip shows that raw colour value. "
+            "Tooltips exist only on the HTML maps; the PNG screenshots in the mapbook "
+            "are static."
+        ),
+    ]
+
     # ── 5. Summary Metrics ────────────────────────────────────────────────────
     story += [
         sp(4), h1("5. Summary Metrics"), hr(),
@@ -810,7 +847,7 @@ def build():
         table(
             [
                 ["Mode",     "Behaviour"],
-                ["Preset",   "Choose a common lookback — Same as current period, Previous month, Previous 3 months, Previous 6 months, or Previous year"],
+                ["Preset",   "Choose a common lookback — Same as current period, 1 month back, 3 months back, 6 months back, or 1 year back"],
                 ["Calendar", "Manually pick the exact Start Date for the comparison period"],
                 ["Custom",   "Enter a Years / Months / Weeks / Days offset to count backward from the current time range's start date (default: 1 month back)"],
             ],
@@ -818,7 +855,11 @@ def build():
         ),
         p(
             "Default is the <b>Preset</b> mode with <b>Same as current period</b> "
-            "selected, which is the most common use case for month-on-month comparisons."
+            "selected (set in the spec's form overrides). It subtracts the length of the "
+            "current time range from its start date, giving a comparison period of equal "
+            "length immediately before it — e.g. a 1 Jul – 30 Sep range is compared with "
+            "1 Apr – 1 Jul. The fixed presets subtract a calendar offset "
+            "(<code>relativedelta</code>) from the start date instead."
         ),
     ]
 
@@ -832,9 +873,9 @@ def build():
         table(
             [
                 ["Package",                       "Version",              "Role"],
-                ["ecoscope-platform",              "2.18.0",               "Core task library and workflow engine (replaces ecoscope-workflows-core / -ext-ecoscope / -ext-big-life)"],
-                ["ecoscope-workflows-ext-custom",  "0.1.0rc14.*",          "Custom STE utility tasks"],
-                ["ecoscope-workflows-ext-ste",     "0.0.0rc1.*",           "STE-specific tasks (mapbook, seasonal analysis, map overlay)"],
+                ["ecoscope-platform",              "==2.25.3",             "Core task library and workflow engine, including the map layer, draw_map and set_base_maps tasks (replaces ecoscope-workflows-core / -ext-ecoscope / -ext-big-life)"],
+                ["ecoscope-workflows-ext-custom",  "0.1.4.*",              "Custom STE utility tasks"],
+                ["ecoscope-workflows-ext-ste",     "0.0.24.*",             "STE-specific tasks (mapbook, seasonal analysis, map overlay, previous period)"],
                 ["pydeck",                         "0.9.2",                "Renders the interactive DeckGL maps"],
                 ["opentelemetry-sdk",              ">=1.20.0, &lt;2.0.0",  "Workflow run telemetry/observability instrumentation"],
             ],
