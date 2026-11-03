@@ -1,4 +1,60 @@
 id: mapbook_report
+
+metadata:
+  name: STE Mapbook
+  description: >-
+    Generates a multi-section mapbook for wildlife tracking data from EarthRanger,
+    producing six maps per subject (movement tracks against a previous period, speed,
+    day/night movement, home range, mean speed raster and seasonal home range) in a
+    Word mapbook and on an interactive dashboard.
+  maintainers:
+    - name: Tevin Temu
+      email: tevin@wildlifedynamics.com
+      role: owner
+    - name: Zakariya Husayn
+      email: zakariya@wildlifedynamics.com
+      role: reviewer
+  outputs:
+    - name: STE Mapbook Dashboard
+      type: dashboard
+      description: >-
+        Movement tracks, speed, day/night, home range, mean speed raster and seasonal
+        home range maps per subject, plus total MCP area, total grid area and sex
+        widgets.
+      indicators:
+        - name: Animal movement
+        - name: Home range
+    - name: Subject Maps
+      type: map
+      description: >-
+        Six maps per subject over protected areas (LandDx) or EarthRanger spatial
+        feature overlays: tracks against a previous period, speed, day/night movement,
+        ETD and MCP home range, mean speed raster and wet/dry season home range.
+      indicators:
+        - name: Animal movement
+        - name: Home range
+    - name: Mapbook
+      type: file
+      description: >-
+        A Word mapbook with a cover page and one section per subject, also offered as
+        a dashboard download.
+      indicators:
+        - name: Animal movement
+        - name: Home range
+    - name: Mapbook Data
+      type: file
+      description: >-
+        Current- and previous-period relocations and trajectories and home range
+        polygons (GeoParquet).
+      indicators:
+        - name: Animal movement
+        - name: Home range
+  license: BSD-3-Clause
+  repository: https://github.com/wildlife-dynamics/ste-mapbook
+  documentation: https://github.com/wildlife-dynamics/ste-mapbook#readme
+  readme: README.md
+  keywords: [mapbook, elephants, movement, home-range, etd, seasons, save-the-elephants]
+  thumbnail: resources/thumbnail.png
 requirements:
   - name: ecoscope-platform
     version: ==2.25.3
