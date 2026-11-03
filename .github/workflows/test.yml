@@ -50,7 +50,7 @@ jobs:
           fi
 
           echo "✅ spec.yaml validation passed"
-      
+
       - name: Validate test-cases.yaml
         run: |
           TEST_CASES_FILE="test-cases.yaml"
@@ -126,9 +126,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: prefix-dev/setup-pixi@v0.8.1
+      - uses: prefix-dev/setup-pixi@v0.9.6
         with:
-          pixi-version: v0.60.0
+          pixi-version: v0.80.0
 
       - name: Write GEE key to file
         env:
@@ -145,6 +145,9 @@ jobs:
           ECOSCOPE_WORKFLOWS__CONNECTIONS__EARTHRANGER__MEP_DEV__SERVER: ${{ secrets.ER_SERVER }}
           ECOSCOPE_WORKFLOWS__CONNECTIONS__EARTHRANGER__MEP_DEV__PASSWORD: ${{ secrets.ER_PASSWORD }}
           ECOSCOPE_WORKFLOWS__CONNECTIONS__EARTHRANGER__MEP_DEV__USERNAME: ${{ secrets.ER_USERNAME }}
+          # Synthetic mock-IO data for this workflow (mock-io/), used instead of the
+          # generic package example, which has rangers and a helicopter, not elephants.
+          WT_TASK_MOCK_IO__ECOSCOPE_PLATFORM_TASKS_IO_GET_SUBJECTGROUP_OBSERVATIONS: ${{ github.workspace }}/mock-io/get-subjectgroup-observations.example-return.parquet
         run: |
           chmod +x dev/pytest-cli.sh || true
           pixi run --manifest-path pixi.toml -e default bash dev/pytest-cli.sh ${{ needs.discover.outputs.workflow_id }} --all

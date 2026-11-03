@@ -9,6 +9,13 @@ channels = [
 ]
 
 [dependencies]
-wt-compiler = ">=0.8.2, <0.9"
+wt-compiler = "==0.10.2"
 graphviz = "*"
 go-yq = "*"
+python = "3.14.*"
+
+[tasks.compile]
+cmd = './dev/recompile.sh --install'
+
+[tasks.recompile]
+cmd = './dev/recompile.sh --update'
