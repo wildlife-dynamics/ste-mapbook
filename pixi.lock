@@ -112,7 +112,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/rpds-py-2026.6.3-py314h1bee95f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ruamel.yaml-0.18.17-py314h0f05182_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ruamel.yaml.clib-0.2.15-py314h0f05182_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/ruff-0.15.21-h6a952e8_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/ruff-0.16.6-hbcb56a7_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h366c992_103.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-w-1.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.16.0-h69aa097_0.conda
@@ -121,7 +121,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/wayland-1.25.0-hd6090a7_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/wcwidth-0.8.2-pyhd8ed1ab_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.8.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.10.2-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.2.0-pyh4616a5c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/xkeyboard-config-2.48-h280c20c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/xorg-libice-1.1.2-hb9d3cd8_0.conda
@@ -220,7 +220,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/rpds-py-2026.6.3-py314h1d56075_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ruamel.yaml-0.18.17-py314hd330473_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ruamel.yaml.clib-0.2.15-py314hd330473_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-64/ruff-0.15.21-h1ddadc8_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/ruff-0.16.6-haa00350_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tk-8.6.13-h7142dee_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-w-1.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.16.0-h69aa097_0.conda
@@ -228,7 +228,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.16.0-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/wcwidth-0.8.2-pyhd8ed1ab_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.8.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.10.2-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.2.0-pyh4616a5c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.7-h3eecb57_6.conda
       osx-arm64:
@@ -309,7 +309,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/rpds-py-2026.6.3-py314he1d1ac0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruamel.yaml-0.18.17-py314ha14b1ff_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruamel.yaml.clib-0.2.15-py314ha14b1ff_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruff-0.15.21-h80928e0_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruff-0.16.6-h7f187d3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tk-8.6.13-h010d191_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-w-1.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.16.0-h69aa097_0.conda
@@ -317,7 +317,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.16.0-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/wcwidth-0.8.2-pyhd8ed1ab_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.8.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.10.2-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.2.0-pyh4616a5c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hbf9d68e_6.conda
       win-64:
@@ -397,7 +397,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/rpds-py-2026.6.3-py314hc980628_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/ruamel.yaml-0.18.17-py314hc5dbbe4_2.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/ruamel.yaml.clib-0.2.15-py314hc5dbbe4_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/win-64/ruff-0.15.21-h45713df_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/ruff-0.16.6-hcc30601_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tk-8.6.13-h6ed50ae_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tomli-w-1.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing-extensions-4.16.0-h69aa097_0.conda
@@ -409,7 +409,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/vc14_runtime-14.51.36231-h1b9f54f_39.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/vcomp14-14.51.36231-h1b9f54f_39.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/wcwidth-0.8.2-pyhd8ed1ab_0.conda
-      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.8.2-pyh4616a5c_0.conda
+      - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.10.2-pyh4616a5c_0.conda
       - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.2.0-pyh4616a5c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/xorg-libice-1.1.2-h0e40799_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/xorg-libsm-1.2.6-h0e40799_0.conda
@@ -3749,37 +3749,24 @@ packages:
   license_family: MIT
   size: 105668
   timestamp: 1766159584330
-- conda: https://conda.anaconda.org/conda-forge/linux-64/ruff-0.15.21-h6a952e8_0.conda
+- conda: https://conda.anaconda.org/conda-forge/linux-64/ruff-0.16.6-hbcb56a7_0.conda
   noarch: python
-  sha256: 2926c4f0adb88058e3d797c39cccc965bb4f1e0a3f582403b57fa83ea2f7e4af
-  md5: 469696f9c70885af30a0af1ce2e8c3a6
+  sha256: fc9e190a1cd67a8ff56b18dd7bd54e861cc68d60f85d9479a12fe95095fc5735
+  md5: f5fd5d7420ce4f559441fae583f4c07d
   depends:
   - python
-  - libgcc >=14
   - __glibc >=2.17,<3.0.a0
+  - libgcc >=15
   constrains:
   - __glibc >=2.17
   license: MIT
   license_family: MIT
-  size: 9356259
-  timestamp: 1783653725254
-- conda: https://conda.anaconda.org/conda-forge/osx-64/ruff-0.15.21-h1ddadc8_0.conda
+  size: 8983605
+  timestamp: 1788474545889
+- conda: https://conda.anaconda.org/conda-forge/osx-64/ruff-0.16.6-haa00350_0.conda
   noarch: python
-  sha256: d4b11da12053af472ed32eafc744b4eaa490ff8e4394b806b3f45778ca0c918e
-  md5: 3542ffffbe904a0a33eed5d345e314c1
-  depends:
-  - python
-  - __osx >=11.0
-  constrains:
-  - __osx >=10.13
-  license: MIT
-  license_family: MIT
-  size: 9348629
-  timestamp: 1783653896015
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruff-0.15.21-h80928e0_0.conda
-  noarch: python
-  sha256: 030f59aa0d9f4b0b1cc0583fb18a260a70d4f3c2b548e8378b109f2c750fad4b
-  md5: 802c895a8f535ce9342dc0c968a05ded
+  sha256: 6a884f8eebad7870ab836ea72657fb757b7ca4a3326a5ac68c4f79e800b983c1
+  md5: a7f1add2d357e8cc575a55dd482f1013
   depends:
   - python
   - __osx >=11.0
@@ -3787,12 +3774,25 @@ packages:
   - __osx >=11.0
   license: MIT
   license_family: MIT
-  size: 8557660
-  timestamp: 1783653958411
-- conda: https://conda.anaconda.org/conda-forge/win-64/ruff-0.15.21-h45713df_0.conda
+  size: 8855427
+  timestamp: 1788474735249
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruff-0.16.6-h7f187d3_0.conda
   noarch: python
-  sha256: 739964d918762bfc0c95d9d3863b6f632a0161a340a6d1d92ded8f11955e928d
-  md5: b0df8296d8d29cfcf267c64d48dd5d53
+  sha256: afa2a86da96a6438e8b8bc65b4575d0ed058fd2bbf435a9a503cd9cd46dac440
+  md5: ad11c5c596f426a183f4642f66c2f5f2
+  depends:
+  - python
+  - __osx >=11.0
+  constrains:
+  - __osx >=11.0
+  license: MIT
+  license_family: MIT
+  size: 8188680
+  timestamp: 1788474751389
+- conda: https://conda.anaconda.org/conda-forge/win-64/ruff-0.16.6-hcc30601_0.conda
+  noarch: python
+  sha256: 62c3e491290e859197dd41e5513f3b8f4cb9b15ad349d68bf0721438bdb036dd
+  md5: b2888407d772e22199e6583dd2330cc9
   depends:
   - python
   - vc >=14.3,<15
@@ -3800,8 +3800,8 @@ packages:
   - ucrt >=10.0.20348.0
   license: MIT
   license_family: MIT
-  size: 9846351
-  timestamp: 1783653785431
+  size: 9305951
+  timestamp: 1788474543887
 - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h366c992_103.conda
   sha256: cafeec44494f842ffeca27e9c8b0c27ed714f93ac77ddadc6aaf726b5554ebac
   md5: cffd3bdd58090148f4cfcd831f4b26ab
@@ -3956,24 +3956,25 @@ packages:
   license_family: MIT
   size: 132415
   timestamp: 1782771807703
-- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.8.2-pyh4616a5c_0.conda
-  sha256: d1454db9a8fef80b9c18358e3ef50e0cb908137ade65310fb70d479132c79c65
-  md5: cdafefc18aa6e28468d8f7cd8f0a0ed5
+- conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-compiler-0.10.2-pyh4616a5c_0.conda
+  sha256: b835b48bbe4331060b5b673f634f6e20c9acf9ef49ee0b96a7b8663d58ae7307
+  md5: fb02a689faaadd15a1fef2de12e15321
   depends:
   - python >=3.12,<3.16
+  - python >=3.12
   - python *
   - pydantic >=2.0.0,<3.0.0
   - jinja2 >=3.0.0
   - ruamel.yaml >=0.17.0,<0.19.0
   - py-rattler >=0.22.0,<0.23.0
   - pydot >=1.4.0
-  - ruff >=0.1.0
+  - ruff ==0.16.6
   - tomli-w >=1.0.0
   - wt-contracts >=0.2.0,<1.0.0
   - questionary >=2.0.0,<3.0.0
   license: BSD-3-Clause
-  size: 95365
-  timestamp: 1782496788565
+  size: 97779
+  timestamp: 1791486366377
 - conda: https://repo.prefix.dev/ecoscope-workflows/noarch/wt-contracts-0.2.0-pyh4616a5c_0.conda
   sha256: 69538ab759dd27ebd4e082e38932864f29aa9e4f9ffe73768cd6952bf9090970
   md5: 6f7052e966b02e939dccb2b191ee2530

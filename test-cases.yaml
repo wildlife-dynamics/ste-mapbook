@@ -1,10 +1,12 @@
-all-grouper:
-  name: All Grouper
-  description: A demonstration of a workflow with no grouping.
+landdx-preset-period:
+  name: LandDx Overlay, Preset Previous Period
+  description: >-
+    Mapbook of the mock elephants over the LandDx protected areas, compared with
+    the 3 months before the time range.
   params:
     workflow_details:
-      description: ''
-      name: cus
+      name: STE Mapbook
+      description: Mapbook test with the LandDx overlay and a preset previous period.
     time_range:
       timezone:
         label: UTC
@@ -12,29 +14,21 @@ all-grouper:
         name: UTC
         utc: '+00:00'
       time_format: '%d %b %Y %H:%M:%S'
-      since: '2008-02-02T10:34:00.000Z'
-      until: '2013-02-03T10:34:00.000Z'
-    groupers:
-      groupers: []
-    configure_base_maps:
-      base_maps:
-        - url: >-
-            https://server.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}
-          opacity: 1
-          max_zoom: 20
-    set_previous_period:
-      option:
-        custom: Previous 3 months
+      since: '2011-01-01T00:00:00.000Z'
+      until: '2012-01-01T00:00:00.000Z'
     er_client_name:
       data_source:
-        name: ste
+        name: mep_dev
     gee_project_name:
       data_source:
         name: ecoscope_poc
-    retrieve_ldx_db:
-      input_method:
-        url: >-
-          https://www.dropbox.com/scl/fi/v9maw2jeg1zptv68qtpv3/landDx.gpkg?rlkey=kez5vsbxkgha2emfy5kzwa5n1&st=98v4anq3&dl=0
+    subject_group_var:
+      var: Elephants
+    set_previous_period:
+      offset:
+        preset: 3 months back
+    map_overlay:
+      option: {}
     custom_trajs_filter:
       min_length_meters: 0.001
       max_length_meters: 5000
@@ -42,21 +36,16 @@ all-grouper:
       max_time_secs: 21600
       min_speed_kmhr: 0.01
       max_speed_kmhr: 9
-    logo_path:
-      input_method:
-        url: >-
-          https://www.dropbox.com/scl/fi/1gn84pq9c7tedgg3k90qt/save-the-elephants.jpg?rlkey=ump7g2hcc2pn0pd5nst203c7w&st=dyayk2n2&dl=0
-    subject_group_var:
-      var: elephants
 
-
-value-grouper:
-  name: Value Grouper
-  description: A demonstration of a workflow grouped by a value.
+custom-period:
+  name: Custom Previous Period
+  description: >-
+    Mapbook of the mock elephants compared with a custom 6-month previous period,
+    with a tighter map zoom.
   params:
     workflow_details:
-      description: ''
-      name: cus
+      name: STE Mapbook
+      description: Mapbook test with a custom previous period.
     time_range:
       timezone:
         label: UTC
@@ -64,30 +53,21 @@ value-grouper:
         name: UTC
         utc: '+00:00'
       time_format: '%d %b %Y %H:%M:%S'
-      since: '2008-02-02T10:34:00.000Z'
-      until: '2013-02-03T10:34:00.000Z'
-    groupers:
-      groupers:
-        - subject_name
-    configure_base_maps:
-      base_maps:
-        - url: >-
-            https://server.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}
-          opacity: 1
-          max_zoom: 20
-    set_previous_period:
-      option:
-        custom: Previous 3 months
+      since: '2011-01-01T00:00:00.000Z'
+      until: '2012-01-01T00:00:00.000Z'
     er_client_name:
       data_source:
-        name: ste
+        name: mep_dev
     gee_project_name:
       data_source:
         name: ecoscope_poc
-    retrieve_ldx_db:
-      input_method:
-        url: >-
-          https://www.dropbox.com/scl/fi/v9maw2jeg1zptv68qtpv3/landDx.gpkg?rlkey=kez5vsbxkgha2emfy5kzwa5n1&st=98v4anq3&dl=0
+    subject_group_var:
+      var: Elephants
+    set_previous_period:
+      offset:
+        months: 6
+    map_overlay:
+      option: {}
     custom_trajs_filter:
       min_length_meters: 0.001
       max_length_meters: 5000
@@ -95,9 +75,5 @@ value-grouper:
       max_time_secs: 21600
       min_speed_kmhr: 0.01
       max_speed_kmhr: 9
-    logo_path:
-      input_method:
-        url: >-
-          https://www.dropbox.com/scl/fi/1gn84pq9c7tedgg3k90qt/save-the-elephants.jpg?rlkey=ump7g2hcc2pn0pd5nst203c7w&st=dyayk2n2&dl=0
-    subject_group_var:
-      var: elephants
+    zoom_to_envelope:
+      expansion_factor: 1.2

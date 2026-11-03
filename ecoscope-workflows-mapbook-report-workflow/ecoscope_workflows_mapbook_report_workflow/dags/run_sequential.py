@@ -34,6 +34,9 @@ from ecoscope.platform.tasks.preprocessing import (
 from ecoscope.platform.tasks.preprocessing import (
     relocations_to_trajectory as relocations_to_trajectory,
 )
+from ecoscope.platform.tasks.results import (
+    create_files_single_view as create_files_single_view,
+)
 from ecoscope.platform.tasks.results import create_geojson_layer as create_geojson_layer
 from ecoscope.platform.tasks.results import (
     create_map_widget_single_view as create_map_widget_single_view,
@@ -92,10 +95,7 @@ from ecoscope_workflows_ext_ste.tasks.filter import get_duration as get_duration
 from ecoscope_workflows_ext_ste.tasks.io import (
     compute_seasons_from_ndvi as compute_seasons_from_ndvi,
 )
-from ecoscope_workflows_ext_ste.tasks.io import (
-    fetch_and_persist_file as fetch_and_persist_file,
-)
-from ecoscope_workflows_ext_ste.tasks.io import get_file_path as get_file_path
+from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
 from ecoscope_workflows_ext_ste.tasks.io import raster_to_gdf as raster_to_gdf
 from ecoscope_workflows_ext_ste.tasks.io._seasons import (
     create_seasonal_labels as create_seasonal_labels,
@@ -355,12 +355,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(
-            client=er_client_name,
-            output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            ldx_url="https://www.dropbox.com/scl/fi/uitptfgxk4wnfcnv9k96a/mapbook_ldx_layers.gpkg?rlkey=xi2azbfzqix9udytv3smsf6eh&st=249w3d2x&dl=0",
-            **(params.get("map_overlay") or {}),
-        )
+        .partial(**(params.get("map_overlay") or {}))
         .call()
     )
 
@@ -3645,7 +3640,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     logo_path = (
-        task(get_file_path)
+        task(load_mapbook_file)
         .validate()
         .set_task_instance_id("logo_path")
         .handle_errors()
@@ -3657,10 +3652,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(
-            output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            **(params.get("logo_path") or {}),
-        )
+        .partial(filename="wd-logo.png", **(params.get("logo_path") or {}))
         .call()
     )
 
@@ -3932,7 +3924,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     download_mapbook_cover_page = (
-        task(fetch_and_persist_file)
+        task(load_mapbook_file)
         .validate()
         .set_task_instance_id("download_mapbook_cover_page")
         .handle_errors()
@@ -3945,18 +3937,14 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
-            url="https://www.dropbox.com/scl/fi/v2rbwywas1ag645qjptsk/mapbook_cover_page.docx?rlkey=pmpmkgjpjoc4i8ngt7qfipstz&st=xqplosdg&dl=0",
-            output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            overwrite_existing=False,
-            unzip=False,
-            retries=2,
+            filename="mapbook_cover_page.docx",
             **(params.get("download_mapbook_cover_page") or {}),
         )
         .call()
     )
 
     download_sect_templates = (
-        task(fetch_and_persist_file)
+        task(load_mapbook_file)
         .validate()
         .set_task_instance_id("download_sect_templates")
         .handle_errors()
@@ -3969,11 +3957,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
-            url="https://www.dropbox.com/scl/fi/2h1gakoqgtsxbw2axibmk/mapbook_grouper_template.docx?rlkey=3jz96yxacnotzrbx32v06jvj1&st=5kc9g34a&dl=0",
-            output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            overwrite_existing=False,
-            unzip=False,
-            retries=2,
+            filename="mapbook_grouper_template.docx",
             **(params.get("download_sect_templates") or {}),
         )
         .call()
@@ -4109,6 +4093,14 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             previous_period=set_previous_period,
             period=round_report_duration,
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            map_files=[
+                movement_png,
+                speedmap_png,
+                day_night_png,
+                homerange_png,
+                mean_speed_raster_png,
+                seasonal_hr_png,
+            ],
             **(params.get("build_mapbook_context") or {}),
         )
         .mapvalues(
@@ -4184,6 +4176,23 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .call()
     )
 
+    report_files = (
+        task(create_files_single_view)
+        .validate()
+        .set_task_instance_id("report_files")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(files=[merge_mapbook_docs], **(params.get("report_files") or {}))
+        .call()
+    )
+
     mapbook_dashboard = (
         task(gather_dashboard)
         .validate()
@@ -4212,6 +4221,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             time_range=time_range,
             groupers=groupers,
+            files=report_files,
             **(params.get("mapbook_dashboard") or {}),
         )
         .call()

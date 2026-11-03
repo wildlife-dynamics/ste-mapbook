@@ -156,7 +156,7 @@
     },
     "Map Overlay": {
       "type": "object",
-      "description": "Choose the overlay to display on all maps: (a) LandDx \u2014 standard protected areas downloaded automatically; (b) EarthRanger Spatial Feature \u2014 fetch a named feature set from EarthRanger.",
+      "description": "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or your own local files.",
       "ecoscope:task_group": true,
       "properties": {
         "map_overlay": {
@@ -292,34 +292,6 @@
           },
           "required": [],
           "type": "object",
-          "title": ""
-        }
-      }
-    },
-    "Word Document Cover Page Logo": {
-      "type": "object",
-      "description": "Download or fetch the logo to be used in the report cover page.",
-      "ecoscope:task_group": true,
-      "properties": {
-        "logo_path": {
-          "additionalProperties": false,
-          "properties": {
-            "input_method": {
-              "anyOf": [
-                {
-                  "$ref": "#/$defs/DownloadFile"
-                },
-                {
-                  "$ref": "#/$defs/LocalFile"
-                }
-              ],
-              "default": null,
-              "title": "Input Method",
-              "description": "How to obtain the file: download from a URL or use a local file path"
-            }
-          },
-          "type": "object",
-          "required": [],
           "title": ""
         }
       }
@@ -767,34 +739,6 @@
       "title": "Spatial Feature Layer",
       "type": "object"
     },
-    "DownloadFile": {
-      "properties": {
-        "url": {
-          "description": "URL to download a file",
-          "title": "URL",
-          "type": "string"
-        }
-      },
-      "required": [
-        "url"
-      ],
-      "title": "Download from URL",
-      "type": "object"
-    },
-    "LocalFile": {
-      "properties": {
-        "file_path": {
-          "description": "Path to a local file",
-          "title": "Local file path",
-          "type": "string"
-        }
-      },
-      "required": [
-        "file_path"
-      ],
-      "title": "Use local file",
-      "type": "object"
-    },
     "ValueGrouper": {
       "properties": {
         "index_name": {
@@ -853,8 +797,7 @@
       "Map Overlay",
       "Trajectory Segment Filter",
       "Map Zoom & Extent",
-      "Mean Speed Raster",
-      "Word Document Cover Page Logo"
+      "Mean Speed Raster"
     ]
   },
   "additionalProperties": false

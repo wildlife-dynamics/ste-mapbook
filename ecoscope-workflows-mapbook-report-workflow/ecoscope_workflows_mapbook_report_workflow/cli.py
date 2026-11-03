@@ -7,8 +7,9 @@ import sys
 from importlib.metadata import PackageNotFoundError, version
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 import click
 
@@ -66,11 +67,11 @@ def cli() -> None:
     ),
 )
 def run(
-    config_file: Optional[TextIOWrapper],
-    config_json: Optional[str],
+    config_file: TextIOWrapper | None,
+    config_json: str | None,
     execution_mode: str,
     mock_io: bool,
-    otel_exporter: Optional[str],
+    otel_exporter: str | None,
     otel_console_exporter_dst: str,
 ) -> None:
     import obstore
@@ -137,7 +138,7 @@ def run(
                 "ECOSCOPE_WORKFLOWS_RESULTS must be a file URL (file://...)."
             )
         otel_exporter_kws |= make_otel_console_exporter_file_dst_kws(
-            target_dir=Path(parsed_results_url.path),
+            target_dir=Path(url2pathname(parsed_results_url.path)),
         )
     configure_tracer(
         RELEASE_NAME,
