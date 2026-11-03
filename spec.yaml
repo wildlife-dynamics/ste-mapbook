@@ -1,4 +1,4 @@
-id: mapbook_report 
+id: mapbook_report
 requirements:
   - name: ecoscope-platform
     version: ==2.25.3
@@ -2063,21 +2063,18 @@ workflow:
       df: ${{ workflow.rename_traj_cols.return }}
       column_name: subject_name
 
-  - title: Word Document Cover Page Logo
-    type: task-group
-    description: Download or fetch the logo to be used in the report cover page.
-    tasks:
-      - name: null
-        id: include_maps_toggle
-        task: skip_toggle
-        partial: 
-          enabled: True 
+  - name: Include maps in the Word document
+    id: include_maps_toggle
+    task: skip_toggle
+    partial:
+      enabled: True
 
-      - name: null
-        id: logo_path
-        task: get_file_path
-        partial:
-          output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+  # Cover page logo: the Wildlife Dynamics logo shipped with ext-ste
+  - name: Load cover page logo
+    id: logo_path
+    task: ecoscope_workflows_ext_ste.tasks.io.load_mapbook_file
+    partial:
+      filename: wd-logo.png
 
   - name: Skip movement tracks html
     id: skip_movement_tracks_html

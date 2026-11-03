@@ -23,7 +23,7 @@ jobs:
         run: |
           # Parse the id field from spec.yaml
           if [ -f "spec.yaml" ]; then
-            workflow_id=$(grep '^id:' spec.yaml | head -n 1 | sed 's/^id: *//' | tr -d '\r')
+            workflow_id=$(grep '^id:' spec.yaml | head -n 1 | sed 's/^id: *//; s/[[:space:]]*$//' | tr -d '\r')
 
             if [ -n "$workflow_id" ]; then
               echo "Found workflow ID from spec.yaml: $workflow_id"

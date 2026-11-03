@@ -240,27 +240,6 @@
       "required": [],
       "type": "object",
       "title": ""
-    },
-    "logo_path": {
-      "additionalProperties": false,
-      "properties": {
-        "input_method": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DownloadFile"
-            },
-            {
-              "$ref": "#/$defs/LocalFile"
-            }
-          ],
-          "default": null,
-          "title": "Input Method",
-          "description": "How to obtain the file: download from a URL or use a local file path"
-        }
-      },
-      "type": "object",
-      "required": [],
-      "title": ""
     }
   },
   "$defs": {
@@ -714,34 +693,6 @@
       ],
       "title": "Spatial Feature Layer",
       "type": "object"
-    },
-    "DownloadFile": {
-      "properties": {
-        "url": {
-          "description": "URL to download a file",
-          "title": "URL",
-          "type": "string"
-        }
-      },
-      "required": [
-        "url"
-      ],
-      "title": "Download from URL",
-      "type": "object"
-    },
-    "LocalFile": {
-      "properties": {
-        "file_path": {
-          "description": "Path to a local file",
-          "title": "Local file path",
-          "type": "string"
-        }
-      },
-      "required": [
-        "file_path"
-      ],
-      "title": "Use local file",
-      "type": "object"
     }
   },
   "uiSchema": {
@@ -779,8 +730,7 @@
       "map_overlay",
       "custom_trajs_filter",
       "zoom_to_envelope",
-      "generate_mean_speed_raster",
-      "logo_path"
+      "generate_mean_speed_raster"
     ]
   },
   "additionalProperties": false

@@ -2,7 +2,7 @@ landdx-preset-period:
   name: LandDx Overlay, Preset Previous Period
   description: >-
     Mapbook of the mock elephants over the LandDx protected areas, compared with
-    the 3 months before the time range, with an organisation logo on the cover page.
+    the 3 months before the time range.
   params:
     workflow_details:
       name: STE Mapbook
@@ -36,20 +36,16 @@ landdx-preset-period:
       max_time_secs: 21600
       min_speed_kmhr: 0.01
       max_speed_kmhr: 9
-    logo_path:
-      input_method:
-        url: >-
-          https://www.dropbox.com/scl/fi/1gn84pq9c7tedgg3k90qt/save-the-elephants.jpg?rlkey=ump7g2hcc2pn0pd5nst203c7w&st=dyayk2n2&dl=0
 
-custom-period-no-logo:
-  name: Custom Previous Period, No Logo
+custom-period:
+  name: Custom Previous Period
   description: >-
     Mapbook of the mock elephants compared with a custom 6-month previous period,
-    with a tighter map zoom and no logo on the cover page.
+    with a tighter map zoom.
   params:
     workflow_details:
       name: STE Mapbook
-      description: Mapbook test with a custom previous period and no cover logo.
+      description: Mapbook test with a custom previous period.
     time_range:
       timezone:
         label: UTC

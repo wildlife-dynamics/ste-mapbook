@@ -118,7 +118,6 @@ from ecoscope_workflows_ext_ste.tasks.filter import get_duration as get_duration
 from ecoscope_workflows_ext_ste.tasks.io import (
     compute_seasons_from_ndvi as compute_seasons_from_ndvi,
 )
-from ecoscope_workflows_ext_ste.tasks.io import get_file_path as get_file_path
 from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
 from ecoscope_workflows_ext_ste.tasks.io import raster_to_gdf as raster_to_gdf
 from ecoscope_workflows_ext_ste.tasks.io._seasons import (
@@ -3656,7 +3655,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     logo_path = (
-        task(get_file_path)
+        task(load_mapbook_file)
         .validate()
         .set_task_instance_id("logo_path")
         .handle_errors()
@@ -3668,10 +3667,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(
-            output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            **(params.get("logo_path") or {}),
-        )
+        .partial(filename="wd-logo.png", **(params.get("logo_path") or {}))
         .call()
     )
 
