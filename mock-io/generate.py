@@ -4,10 +4,16 @@ Run from the repo root with any env that has geopandas and pyarrow:
 
     python mock-io/generate.py
 
-The output has the same columns and dtypes as the example return shipped with
-`ecoscope.platform.tasks.io.get_subjectgroup_observations`, but describes four
-made-up collared elephants moving around Samburu, Buffalo Springs, Kalama and
-Shaba. Every name, ID and position is synthetic; the seed makes it reproducible.
+It writes two files:
+
+- the observations, with the same columns and dtypes as the example return
+  shipped with `ecoscope.platform.tasks.io.get_subjectgroup_observations`, but
+  describing four made-up collared elephants moving around Samburu, Buffalo
+  Springs, Kalama and Shaba. Every name, ID and position is synthetic; the seed
+  makes it reproducible.
+- the seasonal windows `compute_seasons_from_ndvi` returns: Samburu's two rainy
+  seasons in 2011, in the shape `ecoscope.analysis.seasons.seasonal_windows`
+  builds from NDVI.
 """
 
 import uuid
@@ -18,7 +24,9 @@ import numpy as np
 import pandas as pd
 from shapely.geometry import Point
 
-OUT = Path(__file__).parent / "get-subjectgroup-observations.example-return.parquet"
+HERE = Path(__file__).parent
+OBSERVATIONS_OUT = HERE / "get-subjectgroup-observations.example-return.parquet"
+SEASONS_OUT = HERE / "compute-seasons-from-ndvi.example-return.parquet"
 SEED = 20110101
 SERVER = "https://mock.pamdas.org"
 
@@ -139,7 +147,32 @@ def build() -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(df, geometry="geometry", crs="EPSG:4326").set_index("id")
 
 
+# Samburu has two rainy seasons: the long rains (Mar-May) and the short rains
+# (late Oct-Dec). Labels match the spec's Dry/Wet colour mapping. Together the
+# windows cover the whole test time range.
+SEASONS = [
+    ("2011-01-01", "2011-03-15", "Dry"),
+    ("2011-03-15", "2011-06-01", "Wet"),
+    ("2011-06-01", "2011-10-20", "Dry"),
+    ("2011-10-20", "2012-01-01", "Wet"),
+]
+
+
+def build_seasons() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "start": pd.to_datetime([s for s, _, _ in SEASONS], utc=True).as_unit("ns"),
+            "end": pd.to_datetime([e for _, e, _ in SEASONS], utc=True).as_unit("ns"),
+            "season": [label for _, _, label in SEASONS],
+        },
+        index=pd.Index(range(1, len(SEASONS) + 1), name="unique_season"),
+    )
+
+
 if __name__ == "__main__":
     gdf = build()
-    gdf.to_parquet(OUT)
-    print(f"Wrote {len(gdf)} observations for {gdf['extra__subject__name'].nunique()} subjects to {OUT}")
+    gdf.to_parquet(OBSERVATIONS_OUT)
+    print(f"Wrote {len(gdf)} observations for {gdf['extra__subject__name'].nunique()} subjects to {OBSERVATIONS_OUT}")
+    seasons = build_seasons()
+    seasons.to_parquet(SEASONS_OUT)
+    print(f"Wrote {len(seasons)} seasonal windows to {SEASONS_OUT}")

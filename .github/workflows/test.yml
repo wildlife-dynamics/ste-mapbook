@@ -148,6 +148,8 @@ jobs:
           # Synthetic mock-IO data for this workflow (mock-io/), used instead of the
           # generic package example, which has rangers and a helicopter, not elephants.
           WT_TASK_MOCK_IO__ECOSCOPE_PLATFORM_TASKS_IO_GET_SUBJECTGROUP_OBSERVATIONS: ${{ github.workspace }}/mock-io/get-subjectgroup-observations.example-return.parquet
+          # Takes effect once ext-ste registers compute_seasons_from_ndvi as an IO task.
+          WT_TASK_MOCK_IO__ECOSCOPE_WORKFLOWS_EXT_STE_TASKS_IO_COMPUTE_SEASONS_FROM_NDVI: ${{ github.workspace }}/mock-io/compute-seasons-from-ndvi.example-return.parquet
         run: |
           chmod +x dev/pytest-cli.sh || true
           pixi run --manifest-path pixi.toml -e default bash dev/pytest-cli.sh ${{ needs.discover.outputs.workflow_id }} --all
