@@ -2364,7 +2364,14 @@ workflow:
       filename: overall_report.docx
       context_page_items: ${{ workflow.persist_mapbook_page.return }}
 
-  - name: Mapbook dashboard 
+  - name: Report files
+    id: report_files
+    task: create_files_single_view
+    partial:
+      files:
+        - ${{ workflow.merge_mapbook_docs.return }}
+
+  - name: Mapbook dashboard
     id: mapbook_dashboard 
     task: gather_dashboard 
     partial: 
@@ -2379,7 +2386,8 @@ workflow:
         - ${{ workflow.merge_speedmap_widgets.return }} # speedmap 
         - ${{ workflow.merge_mean_speed_raster_widgets.return }} # speedraster widgets 
         - ${{ workflow.merge_day_night_widgets.return }} # day/night widgets 
-        - ${{ workflow.merge_seasonal_hr_widgets.return }} #seasons 
-      
+        - ${{ workflow.merge_seasonal_hr_widgets.return }} #seasons
+
       time_range: ${{ workflow.time_range.return }}
       groupers: ${{ workflow.groupers.return }}
+      files: ${{ workflow.report_files.return }}
