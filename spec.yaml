@@ -177,16 +177,18 @@ workflow:
 
   - title: Map Overlay
     type: task-group
-    description: "Choose the overlay to display on all maps: (a) LandDx — standard protected areas downloaded automatically; (b) EarthRanger Spatial Feature — fetch a named feature set from EarthRanger."
+    description: "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or your own local files."
     tasks:
       - name: null
         id: map_overlay
-        task: ecoscope_workflows_ext_ste.tasks.landdx.select_map_overlay # allow user to include multiple ER spatial features
+        # No EarthRanger client for now: LandDx and local files don't need one,
+        # and passing it makes every run log in to EarthRanger first. The
+        # EarthRanger Spatial Feature option needs it, so it raises until the
+        # client is passed again.
+        task: ecoscope_workflows_ext_ste.tasks.landdx.select_map_overlay
         skipif:
           conditions:
             - never
-        partial:
-          client: ${{ workflow.er_client_name.return }}
 
   - name: Choose subject group to analyze 
     id: subject_observations 

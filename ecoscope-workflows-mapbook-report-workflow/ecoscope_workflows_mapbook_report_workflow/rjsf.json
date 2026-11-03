@@ -156,7 +156,7 @@
     },
     "Map Overlay": {
       "type": "object",
-      "description": "Choose the overlay to display on all maps: (a) LandDx \u2014 standard protected areas downloaded automatically; (b) EarthRanger Spatial Feature \u2014 fetch a named feature set from EarthRanger.",
+      "description": "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or your own local files.",
       "ecoscope:task_group": true,
       "properties": {
         "map_overlay": {
