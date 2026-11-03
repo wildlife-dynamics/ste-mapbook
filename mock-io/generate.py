@@ -8,9 +8,9 @@ It writes two files:
 
 - the observations, with the same columns and dtypes as the example return
   shipped with `ecoscope.platform.tasks.io.get_subjectgroup_observations`, but
-  describing four made-up collared elephants moving around Samburu, Buffalo
-  Springs, Kalama and Shaba. Every name, ID and position is synthetic; the seed
-  makes it reproducible.
+  describing one made-up collared elephant moving around Samburu and Buffalo
+  Springs. Every name, ID and position is synthetic; the seed makes it
+  reproducible.
 - the seasonal windows `compute_seasons_from_ndvi` returns: Samburu's two rainy
   seasons in 2011, in the shape `ecoscope.analysis.seasons.seasonal_windows`
   builds from NDVI.
@@ -39,9 +39,6 @@ FIX_INTERVAL = "3h"  # within the trajectory filter's 6 h max gap
 # name, sex, home-range centre (lon, lat), home-range spread (degrees)
 ELEPHANTS = [
     ("Mock Ewaso", "female", (37.53, 0.60), 0.05),
-    ("Mock Lorian", "female", (37.62, 0.56), 0.04),
-    ("Mock Kalama", "male", (37.50, 0.70), 0.08),
-    ("Mock Shaba", "male", (37.80, 0.66), 0.07),
 ]
 
 
