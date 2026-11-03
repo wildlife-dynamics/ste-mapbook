@@ -149,9 +149,10 @@ def build() -> gpd.GeoDataFrame:
 
 # Samburu has two rainy seasons: the long rains (Mar-May) and the short rains
 # (late Oct-Dec). Labels match the spec's Dry/Wet colour mapping. Together the
-# windows cover the whole test time range.
+# windows cover the whole test time range. create_seasonal_labels excludes a
+# window's start, so the first one opens before the first fix (2011-01-01 00:00).
 SEASONS = [
-    ("2011-01-01", "2011-03-15", "Dry"),
+    ("2010-12-01", "2011-03-15", "Dry"),
     ("2011-03-15", "2011-06-01", "Wet"),
     ("2011-06-01", "2011-10-20", "Dry"),
     ("2011-10-20", "2012-01-01", "Wet"),

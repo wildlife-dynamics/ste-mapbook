@@ -67,33 +67,16 @@ get_subjectgroup_observations = create_func_magicmock(  # 🧪
 from ecoscope.platform.tasks.analysis import (
     calculate_elliptical_time_density as calculate_elliptical_time_density,
 )
-from ecoscope.platform.tasks.analysis import (
-    dataframe_column_nunique as dataframe_column_nunique,
-)
-from ecoscope.platform.tasks.analysis import (
-    dataframe_column_sum as dataframe_column_sum,
-)
 from ecoscope.platform.tasks.config import prefix_string_var as prefix_string_var
 from ecoscope.platform.tasks.groupby import groupbykey as groupbykey
 from ecoscope.platform.tasks.groupby import split_groups as split_groups
 from ecoscope.platform.tasks.io import persist_df as persist_df
 from ecoscope.platform.tasks.io import persist_text as persist_text
 from ecoscope.platform.tasks.results import (
-    create_files_single_view as create_files_single_view,
-)
-from ecoscope.platform.tasks.results import create_geojson_layer as create_geojson_layer
-from ecoscope.platform.tasks.results import (
     create_map_widget_single_view as create_map_widget_single_view,
 )
 from ecoscope.platform.tasks.results import create_path_layer as create_path_layer
-from ecoscope.platform.tasks.results import (
-    create_single_value_widget_single_view as create_single_value_widget_single_view,
-)
-from ecoscope.platform.tasks.results import (
-    create_text_widget_single_view as create_text_widget_single_view,
-)
 from ecoscope.platform.tasks.results import draw_map as draw_map
-from ecoscope.platform.tasks.results import gather_dashboard as gather_dashboard
 from ecoscope.platform.tasks.results import merge_widget_views as merge_widget_views
 from ecoscope.platform.tasks.skip import (
     any_keyed_iterables_are_skips as any_keyed_iterables_are_skips,
@@ -103,14 +86,61 @@ from ecoscope.platform.tasks.transformation import (
 )
 from ecoscope.platform.tasks.transformation import apply_color_map as apply_color_map
 from ecoscope.platform.tasks.transformation import map_columns as map_columns
-from ecoscope.platform.tasks.transformation import (
-    map_values_with_unit as map_values_with_unit,
-)
 from ecoscope.platform.tasks.transformation import sort_values as sort_values
-from ecoscope_workflows_ext_custom.tasks.io import html_to_png as html_to_png
 from ecoscope_workflows_ext_custom.tasks.spatial_ops import (
     reproject_gdf as reproject_gdf,
 )
+from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
+    combine_deckgl_map_layers as combine_deckgl_map_layers,
+)
+from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
+    compute_view_state_from_gdf as compute_view_state_from_gdf,
+)
+from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
+    envelope_gdf as envelope_gdf,
+)
+from ecoscope_workflows_ext_ste.tasks.transformation import (
+    add_new_column as add_new_column,
+)
+from ecoscope_workflows_ext_ste.tasks.transformation import (
+    add_status_color_columns as add_status_color_columns,
+)
+from ecoscope_workflows_ext_ste.tasks.transformation import (
+    column_first_unique_value as column_first_unique_value,
+)
+from ecoscope_workflows_ext_ste.tasks.transformation import (
+    concatenate_dataframes as concatenate_dataframes,
+)
+from ecoscope_workflows_ext_ste.tasks.transformation import safe_string as safe_string
+from ecoscope_workflows_ext_ste.tasks.transformation import (
+    subset_columns as subset_columns,
+)
+
+compute_seasons_from_ndvi = create_func_magicmock(  # 🧪
+    anchor="ecoscope_workflows_ext_ste.tasks.io",  # 🧪
+    func_name="compute_seasons_from_ndvi",  # 🧪
+)  # 🧪
+from ecoscope.platform.tasks.analysis import (
+    dataframe_column_nunique as dataframe_column_nunique,
+)
+from ecoscope.platform.tasks.analysis import (
+    dataframe_column_sum as dataframe_column_sum,
+)
+from ecoscope.platform.tasks.results import (
+    create_files_single_view as create_files_single_view,
+)
+from ecoscope.platform.tasks.results import create_geojson_layer as create_geojson_layer
+from ecoscope.platform.tasks.results import (
+    create_single_value_widget_single_view as create_single_value_widget_single_view,
+)
+from ecoscope.platform.tasks.results import (
+    create_text_widget_single_view as create_text_widget_single_view,
+)
+from ecoscope.platform.tasks.results import gather_dashboard as gather_dashboard
+from ecoscope.platform.tasks.transformation import (
+    map_values_with_unit as map_values_with_unit,
+)
+from ecoscope_workflows_ext_custom.tasks.io import html_to_png as html_to_png
 from ecoscope_workflows_ext_custom.tasks.transformation import (
     format_text_column as format_text_column,
 )
@@ -118,9 +148,6 @@ from ecoscope_workflows_ext_custom.tasks.transformation import (
     to_quantity as to_quantity,
 )
 from ecoscope_workflows_ext_ste.tasks.filter import get_duration as get_duration
-from ecoscope_workflows_ext_ste.tasks.io import (
-    compute_seasons_from_ndvi as compute_seasons_from_ndvi,
-)
 from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
 from ecoscope_workflows_ext_ste.tasks.io import raster_to_gdf as raster_to_gdf
 from ecoscope_workflows_ext_ste.tasks.io._seasons import (
@@ -150,44 +177,19 @@ from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
     calculate_elliptical_time_density_grouped as calculate_elliptical_time_density_grouped,
 )
 from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
-    combine_deckgl_map_layers as combine_deckgl_map_layers,
-)
-from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
     compute_minimum_convex_polygon as compute_minimum_convex_polygon,
-)
-from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
-    compute_view_state_from_gdf as compute_view_state_from_gdf,
-)
-from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
-    envelope_gdf as envelope_gdf,
 )
 from ecoscope_workflows_ext_ste.tasks.transformation import (
     add_mapped_column_value as add_mapped_column_value,
 )
 from ecoscope_workflows_ext_ste.tasks.transformation import (
-    add_new_column as add_new_column,
-)
-from ecoscope_workflows_ext_ste.tasks.transformation import (
     add_rgba_from_hex as add_rgba_from_hex,
-)
-from ecoscope_workflows_ext_ste.tasks.transformation import (
-    add_status_color_columns as add_status_color_columns,
-)
-from ecoscope_workflows_ext_ste.tasks.transformation import (
-    column_first_unique_value as column_first_unique_value,
-)
-from ecoscope_workflows_ext_ste.tasks.transformation import (
-    concatenate_dataframes as concatenate_dataframes,
 )
 from ecoscope_workflows_ext_ste.tasks.transformation import (
     convert_columns_to_string as convert_columns_to_string,
 )
 from ecoscope_workflows_ext_ste.tasks.transformation import (
     round_off_values as round_off_values,
-)
-from ecoscope_workflows_ext_ste.tasks.transformation import safe_string as safe_string
-from ecoscope_workflows_ext_ste.tasks.transformation import (
-    subset_columns as subset_columns,
 )
 
 
@@ -2133,7 +2135,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
 
     determine_seasonal_windows = (
         task(compute_seasons_from_ndvi)
-        .validate()
+        # 🧪 validation omitted for mocked IO task (returns pre-loaded example data)
         .set_task_instance_id("determine_seasonal_windows")
         .handle_errors()
         .with_tracing()
