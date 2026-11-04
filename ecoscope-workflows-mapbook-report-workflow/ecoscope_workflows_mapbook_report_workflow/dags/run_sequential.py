@@ -343,6 +343,23 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .call()
     )
 
+    ldx_path = (
+        task(load_mapbook_file)
+        .validate()
+        .set_task_instance_id("ldx_path")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(filename="mapbook_ldx_layers.gpkg", **(params.get("ldx_path") or {}))
+        .call()
+    )
+
     map_overlay = (
         task(select_map_overlay)
         .validate()
@@ -355,7 +372,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(client=er_client_name, **(params.get("map_overlay") or {}))
+        .partial(option={}, ldx_path=ldx_path, **(params.get("map_overlay") or {}))
         .call()
     )
 
