@@ -27,8 +27,7 @@ metadata:
     - name: Subject Maps
       type: map
       description: >-
-        Six maps per subject over protected areas (LandDx) or EarthRanger spatial
-        feature overlays: tracks against a previous period, speed, day/night movement,
+        Six maps per subject over LandDx protected areas: tracks against a previous period, speed, day/night movement,
         ETD and MCP home range, mean speed raster and wet/dry season home range.
       indicators:
         - name: Animal movement
@@ -65,7 +64,7 @@ requirements:
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: ecoscope-workflows-ext-ste
-    version: "0.0.30.*"
+    version: "0.0.32.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: pydeck
@@ -231,20 +230,22 @@ workflow:
         partial: 
           timerange: ${{ workflow.time_range.return }}
 
-  - title: Map Overlay
-    type: task-group
-    description: "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or your own local files."
-    tasks:
-      - name: null
-        id: map_overlay
-        # No EarthRanger client for now: LandDx and local files don't need one,
-        # and passing it makes every run log in to EarthRanger first. The
-        # EarthRanger Spatial Feature option needs it, so it raises until the
-        # client is passed again.
-        task: ecoscope_workflows_ext_ste.tasks.landdx.select_map_overlay
-        skipif:
-          conditions:
-            - never
+  # LandDx protected areas, shipped with ext-ste
+  - name: Load LandDx layers
+    id: ldx_path
+    task: ecoscope_workflows_ext_ste.tasks.io.load_mapbook_file
+    partial:
+      filename: mapbook_ldx_layers.gpkg
+
+  - name: Create LandDx map overlay
+    id: map_overlay
+    task: ecoscope_workflows_ext_ste.tasks.landdx.select_map_overlay
+    partial:
+      option: {}
+      ldx_path: ${{ workflow.ldx_path.return }}
+    skipif:
+      conditions:
+        - never
 
   - name: Choose subject group to analyze 
     id: subject_observations 

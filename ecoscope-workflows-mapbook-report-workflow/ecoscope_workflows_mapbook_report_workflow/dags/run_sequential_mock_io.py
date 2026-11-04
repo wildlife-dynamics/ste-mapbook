@@ -28,6 +28,7 @@ from ecoscope.platform.tasks.skip import never as never
 from ecoscope_workflows_ext_ste.tasks.filter import (
     flexible_previous_period as flexible_previous_period,
 )
+from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
 from ecoscope_workflows_ext_ste.tasks.landdx import (
     select_map_overlay as select_map_overlay,
 )
@@ -148,7 +149,6 @@ from ecoscope_workflows_ext_custom.tasks.transformation import (
     to_quantity as to_quantity,
 )
 from ecoscope_workflows_ext_ste.tasks.filter import get_duration as get_duration
-from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
 from ecoscope_workflows_ext_ste.tasks.io import raster_to_gdf as raster_to_gdf
 from ecoscope_workflows_ext_ste.tasks.io._seasons import (
     create_seasonal_labels as create_seasonal_labels,
@@ -363,6 +363,23 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .call()
     )
 
+    ldx_path = (
+        task(load_mapbook_file)
+        .validate()
+        .set_task_instance_id("ldx_path")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(filename="mapbook_ldx_layers.gpkg", **(params.get("ldx_path") or {}))
+        .call()
+    )
+
     map_overlay = (
         task(select_map_overlay)
         .validate()
@@ -375,7 +392,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(**(params.get("map_overlay") or {}))
+        .partial(option={}, ldx_path=ldx_path, **(params.get("map_overlay") or {}))
         .call()
     )
 

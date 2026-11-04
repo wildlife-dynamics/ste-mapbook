@@ -27,8 +27,6 @@ landdx-preset-period:
     set_previous_period:
       offset:
         preset: 3 months back
-    map_overlay:
-      option: {}
     custom_trajs_filter:
       min_length_meters: 0.001
       max_length_meters: 5000
@@ -66,8 +64,6 @@ custom-period:
     set_previous_period:
       offset:
         months: 6
-    map_overlay:
-      option: {}
     custom_trajs_filter:
       min_length_meters: 0.001
       max_length_meters: 5000
