@@ -355,7 +355,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(**(params.get("map_overlay") or {}))
+        .partial(client=er_client_name, **(params.get("map_overlay") or {}))
         .call()
     )
 

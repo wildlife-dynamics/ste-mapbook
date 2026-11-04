@@ -65,7 +65,7 @@ requirements:
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: ecoscope-workflows-ext-ste
-    version: "0.0.30.*"
+    version: "0.0.31.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: pydeck
@@ -233,15 +233,13 @@ workflow:
 
   - title: Map Overlay
     type: task-group
-    description: "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or your own local files."
+    description: "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or EarthRanger spatial features."
     tasks:
       - name: null
         id: map_overlay
-        # No EarthRanger client for now: LandDx and local files don't need one,
-        # and passing it makes every run log in to EarthRanger first. The
-        # EarthRanger Spatial Feature option needs it, so it raises until the
-        # client is passed again.
         task: ecoscope_workflows_ext_ste.tasks.landdx.select_map_overlay
+        partial:
+          client: ${{ workflow.er_client_name.return }}
         skipif:
           conditions:
             - never

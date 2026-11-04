@@ -139,9 +139,6 @@
             },
             {
               "$ref": "#/$defs/ERSpatialFeatureOverlayOption"
-            },
-            {
-              "$ref": "#/$defs/LocalFileOverlayOption"
             }
           ],
           "title": "Option",
@@ -225,6 +222,8 @@
         "step_length": {
           "anyOf": [
             {
+              "exclusiveMaximum": 100000,
+              "exclusiveMinimum": 500,
               "type": "integer"
             },
             {
@@ -506,77 +505,6 @@
         }
       },
       "title": "",
-      "type": "object"
-    },
-    "LocalFileOverlayOption": {
-      "description": "Overlay features loaded from one or more local geospatial files.",
-      "properties": {
-        "files": {
-          "description": "One or more local GeoJSON / GeoPackage / GeoParquet files. Each file (or split group within a file) becomes its own styled layer.",
-          "items": {
-            "$ref": "#/$defs/LocalSpatialLayer"
-          },
-          "title": "Files",
-          "type": "array"
-        }
-      },
-      "required": [
-        "files"
-      ],
-      "title": "Custom Local File",
-      "type": "object"
-    },
-    "LocalSpatialLayer": {
-      "description": "A single local-file map layer: what to read and how to render it.",
-      "properties": {
-        "file_path": {
-          "default": "",
-          "description": "Path to the geospatial file.",
-          "ecoscope:advanced": true,
-          "title": "File Path",
-          "type": "string"
-        },
-        "layer": {
-          "default": null,
-          "description": "Layer name within a GeoPackage file. Only required when the file contains multiple layers.",
-          "ecoscope:advanced": true,
-          "title": "Layer",
-          "type": "string"
-        },
-        "split_by": {
-          "default": null,
-          "description": "Optional: split a single file into one map layer per distinct value of this column.",
-          "ecoscope:advanced": true,
-          "title": "Split By",
-          "type": "string"
-        },
-        "group_by": {
-          "default": "",
-          "description": "Column used to group features in the legend e.g. 'name', 'category'.",
-          "ecoscope:advanced": true,
-          "title": "Group By",
-          "type": "string"
-        },
-        "legend_title": {
-          "default": "",
-          "description": "Label shown in the map legend e.g. 'Park Boundary'.",
-          "ecoscope:advanced": true,
-          "title": "Legend Title",
-          "type": "string"
-        },
-        "style": {
-          "default": null,
-          "description": "Optional: Customise how features are rendered on the map.",
-          "ecoscope:advanced": true,
-          "items": {
-            "$ref": "#/$defs/LayerStyle"
-          },
-          "maxLength": 1,
-          "title": "Style",
-          "type": "array"
-        }
-      },
-      "title": "Local Spatial File",
       "type": "object"
     },
     "PointStyle": {
