@@ -97,7 +97,6 @@ from ecoscope_workflows_ext_ste.tasks.io import (
     compute_seasons_from_ndvi as compute_seasons_from_ndvi,
 )
 from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
-from ecoscope_workflows_ext_ste.tasks.io import raster_to_gdf as raster_to_gdf
 from ecoscope_workflows_ext_ste.tasks.io._seasons import (
     create_seasonal_labels as create_seasonal_labels,
 )
@@ -120,7 +119,7 @@ from ecoscope_workflows_ext_ste.tasks.reporting import (
     render_mapbook_page as render_mapbook_page,
 )
 from ecoscope_workflows_ext_ste.tasks.results import (
-    generate_ecograph_raster as generate_ecograph_raster,
+    generate_ecograph_gdf as generate_ecograph_gdf,
 )
 from ecoscope_workflows_ext_ste.tasks.skip import skip_file as skip_file
 from ecoscope_workflows_ext_ste.tasks.skip import skip_toggle as skip_toggle
@@ -373,7 +372,11 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(option={}, ldx_path=ldx_path, **(params.get("map_overlay") or {}))
+        .partial(
+            client=er_client_name,
+            ldx_path=ldx_path,
+            **(params.get("map_overlay") or {}),
+        )
         .call()
     )
 
@@ -1008,6 +1011,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             column_name="duration_status",
             op="equal",
             value="Current tracks",
+            reset_index=True,
             **(params.get("split_traj_by_group") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_comb_trajs)
@@ -1218,25 +1222,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(var="_seasonal_etd", **(params.get("seasonal_etd_filename") or {}))
-        .mapvalues(argnames=["prefix"], argvalues=safe_subject_name)
-    )
-
-    mean_speed_raster_filename = (
-        task(prefix_string_var)
-        .validate()
-        .set_task_instance_id("mean_speed_raster_filename")
-        .handle_errors()
-        .with_tracing()
-        .skipif(
-            conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            var="_mean_speed_raster", **(params.get("mean_speed_raster_filename") or {})
-        )
         .mapvalues(argnames=["prefix"], argvalues=safe_subject_name)
     )
 
@@ -2583,28 +2568,8 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .call()
     )
 
-    zip_raster_filename_gdf = (
-        task(groupbykey)
-        .validate()
-        .set_task_instance_id("zip_raster_filename_gdf")
-        .handle_errors()
-        .with_tracing()
-        .skipif(
-            conditions=[
-                any_dependency_skipped,
-                any_keyed_iterables_are_skips,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            iterables=[mean_speed_raster_filename, split_traj_by_group],
-            **(params.get("zip_raster_filename_gdf") or {}),
-        )
-        .call()
-    )
-
     generate_mean_speed_raster = (
-        task(generate_ecograph_raster)
+        task(generate_ecograph_gdf)
         .validate()
         .set_task_instance_id("generate_mean_speed_raster")
         .handle_errors()
@@ -2625,27 +2590,9 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             tortuosity_length=3,
             resolution=None,
             network_metric=None,
-            output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             **(params.get("generate_mean_speed_raster") or {}),
         )
-        .mapvalues(argnames=["filename", "gdf"], argvalues=zip_raster_filename_gdf)
-    )
-
-    extract_speed_rasters = (
-        task(raster_to_gdf)
-        .validate()
-        .set_task_instance_id("extract_speed_rasters")
-        .handle_errors()
-        .with_tracing()
-        .skipif(
-            conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
-            ],
-            unpack_depth=1,
-        )
-        .partial(**(params.get("extract_speed_rasters") or {}))
-        .mapvalues(argnames=["file_path"], argvalues=generate_mean_speed_raster)
+        .mapvalues(argnames=["gdf"], argvalues=split_traj_by_group)
     )
 
     sort_speed_features_by_value = (
@@ -2667,7 +2614,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ascending=True,
             **(params.get("sort_speed_features_by_value") or {}),
         )
-        .mapvalues(argnames=["df"], argvalues=extract_speed_rasters)
+        .mapvalues(argnames=["df"], argvalues=generate_mean_speed_raster)
     )
 
     reproject_speed_raster = (
