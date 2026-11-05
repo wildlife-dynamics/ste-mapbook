@@ -91,6 +91,7 @@ from ecoscope.platform.tasks.transformation import sort_values as sort_values
 from ecoscope_workflows_ext_custom.tasks.spatial_ops import (
     reproject_gdf as reproject_gdf,
 )
+from ecoscope_workflows_ext_ste.tasks.filter import filter_rows as filter_rows
 from ecoscope_workflows_ext_ste.tasks.spatial_operations import (
     combine_deckgl_map_layers as combine_deckgl_map_layers,
 )
@@ -989,8 +990,29 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .call()
     )
 
-    split_traj_by_group = (
+    split_comb_trajs = (
         task(split_groups)
+        .validate()
+        .set_task_instance_id("split_comb_trajs")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            df=add_temporal_index_to_comb_trajs,
+            groupers=groupers,
+            **(params.get("split_comb_trajs") or {}),
+        )
+        .call()
+    )
+
+    split_traj_by_group = (
+        task(filter_rows)
         .validate()
         .set_task_instance_id("split_traj_by_group")
         .handle_errors()
@@ -1003,11 +1025,12 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             unpack_depth=1,
         )
         .partial(
-            df=create_current_duration_column,
-            groupers=groupers,
+            column_name="duration_status",
+            op="equal",
+            value="Current tracks",
             **(params.get("split_traj_by_group") or {}),
         )
-        .call()
+        .mapvalues(argnames=["df"], argvalues=split_comb_trajs)
     )
 
     unique_subject_name = (
@@ -1235,27 +1258,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             var="_mean_speed_raster", **(params.get("mean_speed_raster_filename") or {})
         )
         .mapvalues(argnames=["prefix"], argvalues=safe_subject_name)
-    )
-
-    split_comb_trajs = (
-        task(split_groups)
-        .validate()
-        .set_task_instance_id("split_comb_trajs")
-        .handle_errors()
-        .with_tracing()
-        .skipif(
-            conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            df=add_temporal_index_to_comb_trajs,
-            groupers=groupers,
-            **(params.get("split_comb_trajs") or {}),
-        )
-        .call()
     )
 
     assign_duration_colors = (

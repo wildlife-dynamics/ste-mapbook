@@ -211,6 +211,20 @@
         }
       }
     },
+    "split_traj_by_group": {
+      "additionalProperties": false,
+      "properties": {
+        "reset_index": {
+          "default": false,
+          "title": "Reset Index",
+          "type": "boolean",
+          "description": "If reset index, default is False"
+        }
+      },
+      "required": [],
+      "type": "object",
+      "title": "Split current-period trajectories by group"
+    },
     "Map Zoom & Extent": {
       "type": "object",
       "description": "Calculate the geographic extent of the movement tracks and determine an appropriate zoom level and center point for the map. This ensures that all tracks are visible and well-framed when the map is rendered.",
@@ -441,6 +455,7 @@
       "Subject Group",
       "Previous Period",
       "Trajectory Segment Filter",
+      "split_traj_by_group",
       "Map Zoom & Extent",
       "Mean Speed Raster"
     ]
