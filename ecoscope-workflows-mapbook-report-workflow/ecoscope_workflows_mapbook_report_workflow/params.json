@@ -179,6 +179,20 @@
       "required": [],
       "title": ""
     },
+    "split_traj_by_group": {
+      "additionalProperties": false,
+      "properties": {
+        "reset_index": {
+          "default": false,
+          "title": "Reset Index",
+          "type": "boolean",
+          "description": "If reset index, default is False"
+        }
+      },
+      "required": [],
+      "type": "object",
+      "title": "Split current-period trajectories by group"
+    },
     "zoom_to_envelope": {
       "additionalProperties": false,
       "properties": {
@@ -383,6 +397,7 @@
       "subject_group_var",
       "set_previous_period",
       "custom_trajs_filter",
+      "split_traj_by_group",
       "zoom_to_envelope",
       "generate_mean_speed_raster"
     ]

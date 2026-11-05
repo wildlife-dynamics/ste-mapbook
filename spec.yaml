@@ -526,12 +526,26 @@ workflow:
       cast_to_datetime: true 
       format: mixed 
   
-  - name: Split trajectories by group 
-    id: split_traj_by_group 
+  - name: Split combined trajectories by group
+    id: split_comb_trajs
     task: split_groups
-    partial: 
-      df: ${{ workflow.create_current_duration_column.return }}
+    partial:
+      df: ${{ workflow.add_temporal_index_to_comb_trajs.return }}
       groupers: ${{ workflow.groupers.return }}
+
+  # Per-group current tracks, derived from the combined split so every per-subject
+  # chain shares the same group keys. A subject with only previous-period tracks
+  # gets an empty frame here and is skipped instead of breaking the groupbykey zips.
+  - name: Split current-period trajectories by group
+    id: split_traj_by_group
+    task: ecoscope_workflows_ext_ste.tasks.filter.filter_rows
+    partial:
+      column_name: duration_status
+      op: equal
+      value: Current tracks
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_comb_trajs.return }}
 
   - title: Get subject name and use them to persist files with it 
     type: task-group
@@ -652,14 +666,7 @@ workflow:
           argnames: prefix 
           argvalues: ${{ workflow.safe_subject_name.return }}
 
-  - name: Split combined trajectories by group
-    id: split_comb_trajs 
-    task: split_groups
-    partial: 
-      df: ${{ workflow.add_temporal_index_to_comb_trajs.return }}
-      groupers: ${{ workflow.groupers.return }}
-
-  - name: Assign duration status colors 
+  - name: Assign duration status colors
     id: assign_duration_colors
     task: ecoscope_workflows_ext_ste.tasks.transformation.add_status_color_columns
     partial:
