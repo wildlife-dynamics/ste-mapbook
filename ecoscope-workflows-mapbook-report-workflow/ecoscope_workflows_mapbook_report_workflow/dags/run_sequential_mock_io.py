@@ -24,19 +24,21 @@ from ecoscope.platform.tasks.skip import (
     any_dependency_skipped as any_dependency_skipped,
 )
 from ecoscope.platform.tasks.skip import any_is_empty_df as any_is_empty_df
-from ecoscope.platform.tasks.skip import never as never
 from ecoscope_workflows_ext_ste.tasks.filter import (
     flexible_previous_period as flexible_previous_period,
 )
 from ecoscope_workflows_ext_ste.tasks.io import load_mapbook_file as load_mapbook_file
-from ecoscope_workflows_ext_ste.tasks.landdx import (
-    select_map_overlay as select_map_overlay,
-)
 from wt_contracts import validate as _validate
 from wt_task import task
 from wt_task.testing import create_func_magicmock  # 🧪
 
 from .. import metadata as _metadata
+
+select_map_overlay = create_func_magicmock(  # 🧪
+    anchor="ecoscope_workflows_ext_ste.tasks.landdx",  # 🧪
+    func_name="select_map_overlay",  # 🧪
+)  # 🧪
+from ecoscope.platform.tasks.skip import never as never
 
 get_subjectgroup_observations = create_func_magicmock(  # 🧪
     anchor="ecoscope.platform.tasks.io",  # 🧪
@@ -382,7 +384,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
 
     map_overlay = (
         task(select_map_overlay)
-        .validate()
+        # 🧪 validation omitted for mocked IO task (returns pre-loaded example data)
         .set_task_instance_id("map_overlay")
         .handle_errors()
         .with_tracing()
