@@ -154,6 +154,35 @@
         }
       }
     },
+    "Map Overlay": {
+      "type": "object",
+      "description": "Choose the overlay to display on all maps: LandDx (standard protected areas shipped with the workflow) or EarthRanger spatial feature groups from the selected data source.",
+      "ecoscope:task_group": true,
+      "properties": {
+        "map_overlay": {
+          "additionalProperties": false,
+          "properties": {
+            "option": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ERSpatialFeatureGroupOverlayOption"
+                },
+                {
+                  "$ref": "#/$defs/LandDxOverlayOption"
+                }
+              ],
+              "title": "Option",
+              "description": "Select the overlay source to display on maps."
+            }
+          },
+          "required": [
+            "option"
+          ],
+          "type": "object",
+          "title": ""
+        }
+      }
+    },
     "Trajectory Segment Filter": {
       "type": "object",
       "description": "Filter trajectory segments based on criteria like minimum/maximum length, duration and speed. This helps remove GPS noise and unrealistic movements. The same filter will be applied to both current and previous trajectories to ensure consistency in the analysis.",
@@ -210,20 +239,6 @@
           "title": ""
         }
       }
-    },
-    "split_traj_by_group": {
-      "additionalProperties": false,
-      "properties": {
-        "reset_index": {
-          "default": false,
-          "title": "Reset Index",
-          "type": "boolean",
-          "description": "If reset index, default is False"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Split current-period trajectories by group"
     },
     "Map Zoom & Extent": {
       "type": "object",
@@ -399,6 +414,171 @@
       "title": "Preset",
       "type": "object"
     },
+    "ERSpatialFeatureGroupOverlayOption": {
+      "description": "Overlay one or more EarthRanger spatial feature groups.",
+      "properties": {
+        "spatial_feature_groups": {
+          "description": "EarthRanger spatial feature groups to display on the maps.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Spatial Feature Groups",
+          "type": "array",
+          "ecoscope:transform": [
+            {
+              "transformer": "EarthRangerEnumResolver",
+              "transformer_kws": {
+                "type": "spatial_feature_group",
+                "depends_on": "properties.er_client_name.properties.data_source.properties.name"
+              }
+            }
+          ]
+        },
+        "style": {
+          "default": [],
+          "description": "Optional: override how the features are rendered. Leave empty to keep the colours set in EarthRanger.",
+          "items": {
+            "$ref": "#/$defs/LayerStyle"
+          },
+          "maxItems": 1,
+          "title": "Style",
+          "type": "array"
+        }
+      },
+      "required": [
+        "spatial_feature_groups"
+      ],
+      "title": "EarthRanger Spatial Feature Groups",
+      "type": "object"
+    },
+    "LandDxOverlayOption": {
+      "description": "Use the default LandDx protected-areas layer.",
+      "properties": {},
+      "title": "LandDx (Default Protected Areas)",
+      "type": "object"
+    },
+    "LayerStyle": {
+      "properties": {
+        "polygon": {
+          "default": [],
+          "description": "Polygon styling. Add one entry to override ER native colours.",
+          "items": {
+            "$ref": "#/$defs/PolygonStyle"
+          },
+          "maxItems": 1,
+          "title": "Polygon",
+          "type": "array"
+        },
+        "line": {
+          "default": [],
+          "description": "Line styling. Add one entry to override ER native colours.",
+          "items": {
+            "$ref": "#/$defs/LineStyle"
+          },
+          "maxItems": 1,
+          "title": "Line",
+          "type": "array"
+        },
+        "point": {
+          "default": [],
+          "description": "Point and icon marker styling. Add one entry to override ER native colours.",
+          "items": {
+            "$ref": "#/$defs/PointStyle"
+          },
+          "maxItems": 1,
+          "title": "Point",
+          "type": "array"
+        }
+      },
+      "title": "",
+      "type": "object"
+    },
+    "LineStyle": {
+      "properties": {
+        "color": {
+          "default": [],
+          "description": "Line hex colour(s) e.g. ['#E63946']. Cycles across rows.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Color",
+          "type": "array"
+        },
+        "opacity": {
+          "default": null,
+          "description": "Line opacity 0\u20131. Works with or without color: leave color empty to keep native EarthRanger colours and only adjust their opacity. Leave empty to keep the native opacity.",
+          "ge": 0.0,
+          "le": 1.0,
+          "title": "Opacity",
+          "type": "number"
+        },
+        "width": {
+          "default": 2.0,
+          "description": "Line width in pixels.",
+          "title": "Width",
+          "type": "number"
+        }
+      },
+      "title": "",
+      "type": "object"
+    },
+    "PointStyle": {
+      "properties": {
+        "color": {
+          "default": [],
+          "description": "Fill hex colour(s). For SVG icons this tints the marker. Cycles across rows.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Color",
+          "type": "array"
+        },
+        "size": {
+          "default": null,
+          "description": "Point radius / icon size in pixels. Leave empty to use the size set in EarthRanger.",
+          "title": "Size",
+          "type": "number"
+        }
+      },
+      "title": "",
+      "type": "object"
+    },
+    "PolygonStyle": {
+      "properties": {
+        "fill_color": {
+          "default": [],
+          "description": "Fill hex colour(s) e.g. ['#FFA500']. Cycles across rows.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Fill Color",
+          "type": "array"
+        },
+        "stroke_color": {
+          "default": null,
+          "description": "Border hex colour.",
+          "title": "Stroke Color",
+          "type": "string"
+        },
+        "fill_opacity": {
+          "default": null,
+          "description": "Fill opacity 0\u20131. Works with or without fill_color: leave fill_color empty to keep native EarthRanger colours and only adjust their opacity. Leave empty to keep the native opacity.",
+          "ge": 0.0,
+          "le": 1.0,
+          "title": "Fill Opacity",
+          "type": "number"
+        },
+        "stroke_width": {
+          "default": 2.0,
+          "description": "Border width in pixels.",
+          "title": "Stroke Width",
+          "type": "number"
+        }
+      },
+      "title": "",
+      "type": "object"
+    },
     "ValueGrouper": {
       "properties": {
         "index_name": {
@@ -454,8 +634,8 @@
       "gee_project_name",
       "Subject Group",
       "Previous Period",
+      "Map Overlay",
       "Trajectory Segment Filter",
-      "split_traj_by_group",
       "Map Zoom & Extent",
       "Mean Speed Raster"
     ]

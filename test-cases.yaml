@@ -24,6 +24,8 @@ landdx-preset-period:
         name: ecoscope_poc
     subject_group_var:
       var: Elephants
+    map_overlay:
+      option: {}
     set_previous_period:
       offset:
         preset: 3 months back
@@ -61,6 +63,8 @@ custom-period:
         name: ecoscope_poc
     subject_group_var:
       var: Elephants
+    map_overlay:
+      option: {}
     set_previous_period:
       offset:
         months: 6

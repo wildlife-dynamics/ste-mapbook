@@ -43,6 +43,7 @@ TEST_CASES_YAML = ARTIFACTS.parent / "test-cases.yaml"
 MATCHSPEC_OVERRIDE = "ecoscope-workflows-mapbook-report-workflow"
 RESULTS_ENV_VAR = "ECOSCOPE_WORKFLOWS_RESULTS"
 IO_TASKS_IMPORTABLE_REFERENCES = [
+    "ecoscope_workflows_ext_ste.tasks.landdx.select_map_overlay",
     "ecoscope.platform.tasks.io.get_subjectgroup_observations",
     "ecoscope.platform.tasks.io.get_subjectgroup_observations",
     "ecoscope_workflows_ext_ste.tasks.io.compute_seasons_from_ndvi",
