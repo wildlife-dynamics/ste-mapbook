@@ -183,7 +183,9 @@ workflow:
   - name: Time Range
     id: time_range
     task: set_time_range
-
+    partial:
+      time_format: "%d %b %Y %H:%M:%S"
+      
   - name: Extract Timezone Selection
     id: get_timezone
     task: get_timezone_from_time_range
