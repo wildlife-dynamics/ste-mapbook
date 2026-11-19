@@ -66,7 +66,7 @@ requirements:
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: ecoscope-workflows-ext-ste
-    version: "0.0.34.*"
+    version: "0.0.36.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
 
   - name: pydeck
@@ -574,7 +574,9 @@ workflow:
           column_name: subject_name
         mapvalues:
           argnames: df
-          argvalues: ${{ workflow.split_traj_by_group.return }}
+          # Current and previous tracks together, so a subject tracked only in the
+          # previous period still gets its file names.
+          argvalues: ${{ workflow.split_comb_trajs.return }}
 
       - name: Safe-string subject name for filenames
         id: safe_subject_name
@@ -783,9 +785,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.combined_ldx_movement_layers.return }}
@@ -813,9 +814,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.movement_filename.return }}
@@ -944,9 +944,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.combined_ldx_speed_layers.return }}
@@ -974,9 +973,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.speedmap_filename.return }}
@@ -1100,9 +1098,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.combined_ldx_daynight_layers.return }}
@@ -1130,9 +1127,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.dn_filename.return }}
@@ -1208,9 +1204,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.etd_filename.return }}
@@ -1228,41 +1223,37 @@ workflow:
         - df
       argvalues: ${{ workflow.etd_df.return }}
 
+  # Seasons are computed once per run, over one region covering every subject's
+  # current tracks, and the same windows are used for all subjects. This keeps
+  # Earth Engine requests independent of the number of subjects, and of whether
+  # a subject has a home range.
+  - name: Generate region covering all subjects
+    id: all_subjects_region
+    task: ecoscope_workflows_ext_ste.tasks.spatial_operations.compute_minimum_convex_polygon
+    partial:
+      gdf: ${{ workflow.rename_traj_cols.return }}
+      planar_crs: ESRI:53042
+
   - name: Determine seasonal windows 
     id: determine_seasonal_windows 
     task: ecoscope_workflows_ext_ste.tasks.io.compute_seasons_from_ndvi
     partial: 
       client: ${{ workflow.gee_project_name.return }}
       time_range: ${{ workflow.time_range.return }}
+      roi: ${{ workflow.all_subjects_region.return }}
       img_collection: "MODIS/061/MCD43A4"
       nir_band: "Nadir_Reflectance_Band2"
       red_band: "Nadir_Reflectance_Band1"
       chunk_count: 5
-    mapvalues: 
-      argnames: roi 
-      argvalues: ${{ workflow.generate_etd.return }}
-
-  - name: Zip seasons with trajectories 
-    id: zip_etd_with_traj 
-    skipif:
-      conditions:
-        - any_dependency_skipped
-        - any_keyed_iterables_are_skips
-      unpack_depth: 1
-    task: groupbykey
-    partial:
-      iterables:
-        - ${{ workflow.determine_seasonal_windows.return }}
-        - ${{ workflow.split_traj_by_group.return }}
 
   - name: Generate season labels 
     id: add_season_labels 
     task: create_seasonal_labels 
+    partial:
+      seasons_df: ${{ workflow.determine_seasonal_windows.return }}
     mapvalues: 
-      argnames: 
-        - seasons_df 
-        - trajectories 
-      argvalues: ${{ workflow.zip_etd_with_traj.return }}
+      argnames: trajectories
+      argvalues: ${{ workflow.split_traj_by_group.return }}
   
   - name: Generate MCP gdf from trajectories 
     id: generate_mcp 
@@ -1287,9 +1278,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.mcp_filename.return }}
@@ -1418,9 +1408,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.create_mcp_polygon_layer.return }}
@@ -1440,9 +1429,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.combined_ldx_home_range_layers.return }}
@@ -1470,9 +1458,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.hr_filename.return }}
@@ -1664,9 +1651,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.combined_ldx_speed_raster.return }}
@@ -1694,9 +1680,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.mr_filename.return }}
@@ -1765,9 +1750,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.seasonal_etd_filename.return }}
@@ -1906,9 +1890,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.combined_ldx_seasonal_hr_layers.return }}
@@ -1936,9 +1919,8 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_complete
     partial:
       iterables:
         - ${{ workflow.seasonal_hr_filename.return }}
@@ -2346,18 +2328,22 @@ workflow:
     skipif:
       conditions:
         - any_dependency_skipped
-        - any_keyed_iterables_are_skips
       unpack_depth: 1
-    task: groupbykey
+    # Every subject gets a page; values it has no data for show as N/A.
+    task: ecoscope_workflows_ext_ste.tasks.skip.groupbykey_keep_skips
     partial: 
       iterables: 
-        - ${{ workflow.split_traj_by_group.return }} #df
+        - ${{ workflow.split_comb_trajs.return }} #df, only used for the subject name
         - ${{ workflow.coverage_grid_quantity.return }} # grid area
         - ${{ workflow.coverage_mcp_quantity.return }} # mcp area 
 
   - name: Create mapbook context 
     id: build_mapbook_context 
     task: create_mapbook_context 
+    # Runs with skipped areas or maps too: the task shows them as N/A.
+    skipif:
+      conditions:
+        - never
     partial: 
       current_period: ${{ workflow.time_range.return }}
       previous_period: ${{ workflow.set_previous_period.return }}
@@ -2395,7 +2381,8 @@ workflow:
       template_path: ${{ workflow.download_sect_templates.return }}
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       filename: ${{ workflow.gate_mapbook_page_filename.return }}
-      strict_images: true
+      # A subject's page is still written when some of its maps could not be drawn.
+      strict_images: false
       box_h_cm: 6.5
       box_w_cm: 11.11
     mapvalues:

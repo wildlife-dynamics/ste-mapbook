@@ -18,7 +18,6 @@ from ecoscope.platform.tasks.filter import (
     get_timezone_from_time_range as get_timezone_from_time_range,
 )
 from ecoscope.platform.tasks.filter import set_time_range as set_time_range
-from ecoscope.platform.tasks.groupby import groupbykey as groupbykey
 from ecoscope.platform.tasks.groupby import set_groupers as set_groupers
 from ecoscope.platform.tasks.groupby import split_groups as split_groups
 from ecoscope.platform.tasks.io import (
@@ -56,9 +55,6 @@ from ecoscope.platform.tasks.skip import (
     any_dependency_skipped as any_dependency_skipped,
 )
 from ecoscope.platform.tasks.skip import any_is_empty_df as any_is_empty_df
-from ecoscope.platform.tasks.skip import (
-    any_keyed_iterables_are_skips as any_keyed_iterables_are_skips,
-)
 from ecoscope.platform.tasks.skip import never as never
 from ecoscope.platform.tasks.transformation import (
     add_temporal_index as add_temporal_index,
@@ -120,6 +116,12 @@ from ecoscope_workflows_ext_ste.tasks.reporting import (
 )
 from ecoscope_workflows_ext_ste.tasks.results import (
     generate_ecograph_gdf as generate_ecograph_gdf,
+)
+from ecoscope_workflows_ext_ste.tasks.skip import (
+    groupbykey_complete as groupbykey_complete,
+)
+from ecoscope_workflows_ext_ste.tasks.skip import (
+    groupbykey_keep_skips as groupbykey_keep_skips,
 )
 from ecoscope_workflows_ext_ste.tasks.skip import skip_file as skip_file
 from ecoscope_workflows_ext_ste.tasks.skip import skip_toggle as skip_toggle
@@ -1033,7 +1035,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .partial(
             column_name="subject_name", **(params.get("unique_subject_name") or {})
         )
-        .mapvalues(argnames=["df"], argvalues=split_traj_by_group)
+        .mapvalues(argnames=["df"], argvalues=split_comb_trajs)
     )
 
     safe_subject_name = (
@@ -1397,7 +1399,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_tracks_with_viewstate = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_tracks_with_viewstate")
         .handle_errors()
@@ -1405,7 +1407,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -1444,7 +1445,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     movement_tracks_text = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("movement_tracks_text")
         .handle_errors()
@@ -1452,7 +1453,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -1657,7 +1657,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_speedmap_with_viewstate = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_speedmap_with_viewstate")
         .handle_errors()
@@ -1665,7 +1665,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -1704,7 +1703,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     speedmap_file_text = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("speedmap_file_text")
         .handle_errors()
@@ -1712,7 +1711,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -1908,7 +1906,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_day_night_with_viewstate = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_day_night_with_viewstate")
         .handle_errors()
@@ -1916,7 +1914,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -1956,7 +1953,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     day_night_text = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("day_night_text")
         .handle_errors()
@@ -1964,7 +1961,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2078,7 +2074,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     etd_df = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("etd_df")
         .handle_errors()
@@ -2086,7 +2082,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2117,6 +2112,27 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .mapvalues(argnames=["filename", "df"], argvalues=etd_df)
     )
 
+    all_subjects_region = (
+        task(compute_minimum_convex_polygon)
+        .validate()
+        .set_task_instance_id("all_subjects_region")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            gdf=rename_traj_cols,
+            planar_crs="ESRI:53042",
+            **(params.get("all_subjects_region") or {}),
+        )
+        .call()
+    )
+
     determine_seasonal_windows = (
         task(compute_seasons_from_ndvi)
         .validate()
@@ -2133,31 +2149,12 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .partial(
             client=gee_project_name,
             time_range=time_range,
+            roi=all_subjects_region,
             img_collection="MODIS/061/MCD43A4",
             nir_band="Nadir_Reflectance_Band2",
             red_band="Nadir_Reflectance_Band1",
             chunk_count=5,
             **(params.get("determine_seasonal_windows") or {}),
-        )
-        .mapvalues(argnames=["roi"], argvalues=generate_etd)
-    )
-
-    zip_etd_with_traj = (
-        task(groupbykey)
-        .validate()
-        .set_task_instance_id("zip_etd_with_traj")
-        .handle_errors()
-        .with_tracing()
-        .skipif(
-            conditions=[
-                any_dependency_skipped,
-                any_keyed_iterables_are_skips,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            iterables=[determine_seasonal_windows, split_traj_by_group],
-            **(params.get("zip_etd_with_traj") or {}),
         )
         .call()
     )
@@ -2175,8 +2172,11 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             ],
             unpack_depth=1,
         )
-        .partial(**(params.get("add_season_labels") or {}))
-        .mapvalues(argnames=["seasons_df", "trajectories"], argvalues=zip_etd_with_traj)
+        .partial(
+            seasons_df=determine_seasonal_windows,
+            **(params.get("add_season_labels") or {}),
+        )
+        .mapvalues(argnames=["trajectories"], argvalues=split_traj_by_group)
     )
 
     generate_mcp = (
@@ -2214,7 +2214,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     mcp_gdf = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("mcp_gdf")
         .handle_errors()
@@ -2222,7 +2222,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2405,7 +2404,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_home_range_with_mcp_layer = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_home_range_with_mcp_layer")
         .handle_errors()
@@ -2413,7 +2412,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2445,7 +2443,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_hr_with_viewstate = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_hr_with_viewstate")
         .handle_errors()
@@ -2453,7 +2451,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2492,7 +2489,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     hr_text_file = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("hr_text_file")
         .handle_errors()
@@ -2500,7 +2497,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2800,7 +2796,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_speed_raster_viewstate = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_speed_raster_viewstate")
         .handle_errors()
@@ -2808,7 +2804,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2847,7 +2842,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     mean_speed_text = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("mean_speed_text")
         .handle_errors()
@@ -2855,7 +2850,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -2967,7 +2961,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     seasonal_etd_gdf = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("seasonal_etd_gdf")
         .handle_errors()
@@ -2975,7 +2969,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -3181,7 +3174,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     zip_seasonal_hr_with_viewstate = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("zip_seasonal_hr_with_viewstate")
         .handle_errors()
@@ -3189,7 +3182,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -3229,7 +3221,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     seasonal_hr_text = (
-        task(groupbykey)
+        task(groupbykey_complete)
         .validate()
         .set_task_instance_id("seasonal_hr_text")
         .handle_errors()
@@ -3237,7 +3229,6 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
@@ -4018,7 +4009,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
     )
 
     group_mapbook_ctx = (
-        task(groupbykey)
+        task(groupbykey_keep_skips)
         .validate()
         .set_task_instance_id("group_mapbook_ctx")
         .handle_errors()
@@ -4026,16 +4017,11 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .skipif(
             conditions=[
                 any_dependency_skipped,
-                any_keyed_iterables_are_skips,
             ],
             unpack_depth=1,
         )
         .partial(
-            iterables=[
-                split_traj_by_group,
-                coverage_grid_quantity,
-                coverage_mcp_quantity,
-            ],
+            iterables=[split_comb_trajs, coverage_grid_quantity, coverage_mcp_quantity],
             **(params.get("group_mapbook_ctx") or {}),
         )
         .call()
@@ -4049,8 +4035,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
         .with_tracing()
         .skipif(
             conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
+                never,
             ],
             unpack_depth=1,
         )
@@ -4111,7 +4096,7 @@ def main(params: dict[str, Any], validate_params_schema: bool = True):
             template_path=download_sect_templates,
             output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             filename=gate_mapbook_page_filename,
-            strict_images=True,
+            strict_images=False,
             box_h_cm=6.5,
             box_w_cm=11.11,
             **(params.get("persist_mapbook_page") or {}),

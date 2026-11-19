@@ -91,7 +91,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>Note:</strong> Very short analysis periods (a few days or weeks) can cause the seasonal analysis step to fail with a Google Earth Engine <code>User memory limit exceeded</code> error. If you hit this, widen the <strong>Since</strong>/<strong>Until</strong> range — a window of two to three months or more gives Earth Engine enough NDVI history to compute season windows reliably.</p>
+<p><strong>Note:</strong> Wet and dry seasons are worked out once per run, from the long-term vegetation (NDVI) record since 2000 over the area covering all subjects' tracks, so every subject shares the same season dates and the result does not depend on how long your time range is. A subject with too little data for a map is shown without that map; its other maps, and the other subjects, are not affected. A subject tracked only in the previous period gets a page with its movement tracks only.</p>
 </blockquote>
 <h3 id="previous-period-range">Previous Period Range</h3>
 <p>Defines the comparison period shown on the Movement Tracks map. In every mode, the comparison period's <strong>end date</strong> is fixed to your time range's start date (so the two periods never overlap) — only the start date calculation changes. Choose one of three modes:</p>
