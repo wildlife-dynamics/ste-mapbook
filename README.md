@@ -72,7 +72,7 @@ The **Configure basemap layers** step sets the background tile layer shared by a
 | Since | Start date/time of the analysis period |
 | Until | End date/time of the analysis period |
 
-> **Note:** Very short analysis periods (a few days or weeks) can cause the seasonal analysis step to fail with a Google Earth Engine `User memory limit exceeded` error. If you hit this, widen the **Since**/**Until** range — a window of two to three months or more gives Earth Engine enough NDVI history to compute season windows reliably.
+> **Note:** Wet and dry seasons are worked out once per run, from the long-term vegetation (NDVI) record since 2000 over the area covering all subjects' tracks, so every subject shares the same season dates and the result does not depend on how long your time range is. A subject with too little data for a map is shown without that map; its other maps, and the other subjects, are not affected. A subject tracked only in the previous period gets a page with its movement tracks only.
 
 ### Previous Period Range
 
